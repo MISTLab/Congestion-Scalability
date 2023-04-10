@@ -1,0 +1,371 @@
+include "includes/vec2.bzz"
+include "includes/RVO.bzz"
+include "includes/neighbors.bzz"
+include "includes/table.bzz"
+
+
+scaling_light_factor = 50
+obstacle_threshold = 0.02
+max_speed = 50
+ang_range =  10 * math.pi / 180
+white_threshold = 0.75
+black_threshold = 0.25
+time_threshold = 50
+delta_time = 20
+
+white = 1 
+black = -1
+
+number_of_samples = 50  
+belief = 0.5
+new_belief = 0.5
+
+sample_average = 0.0
+neighbors_set = nil
+white_neighbors_set = nil
+black_neighbors_set = nil
+samples = {}
+time_steps = 0
+
+
+white_followers = swarm.create(3)
+black_followers = swarm.create(2)
+nesters = swarm.create(5)
+decision_makers = swarm.create(6)
+white_exploration = swarm.create(1)
+black_exploration = swarm.create(4)
+
+
+
+
+
+function sum_light(rid, data, accum) {
+  lvec = math.vec2.newp(data.value, data.angle)
+  accum.vector = math.vec2.add(lvec, accum.vector)
+  if (data.value!=0) { #counting the number of light sensors that are good 
+   accum.number = accum.number +1
+  }
+  return accum
+}
+
+# Filtering Light Function
+function filtered_light() {
+  var filtered_data = reduce(light, sum_light, {.number = 0 , .vector=math.vec2.new(0.0,0.0)})
+  return filtered_data
+}
+
+# Obstacle avoidance function
+function obs_vec()
+{
+  var accum = {}
+  accum.x = 0.0
+  accum.y = 0.0
+  var i = 0
+  while(i < size(proximity)) {
+	accum.x = accum.x + proximity[i].value * math.cos(proximity[i].angle)
+	accum.y = accum.y + proximity[i].value * math.sin(proximity[i].angle)
+	i = i + 1
+  }
+  accum.x = accum.x / size(proximity)
+  accum.y = accum.y / size(proximity)
+
+
+  #debug.print("[",id,"]",math.vec2.length(light_vector)," .x ",light_vector.x," .y ",light_vector.y)
+  return accum
+}
+
+# function to sum the ground sensor values
+function sum_ground(rid, data, accum) {
+   return accum + data.value
+}
+
+# function to calculate the average ground sensor value
+function avg_ground() {
+    var ground_avg = reduce(ground, sum_ground, 0.0)
+    ground_avg = ground_avg / size(ground)
+    return ground_avg
+}
+
+function display_led(){
+    if (white_followers.in()){ 
+        set_leds(255,255,255) 
+    }
+	if (black_followers.in()){ 
+        set_leds(0,0,0) 
+    }
+    if (black_exploration.in()){ set_leds(255,0,0) }
+    if (white_exploration.in()){ set_leds(0,255,0) }
+    if (nesters.in()){ set_leds(0,0,255) }
+    if (decision_makers.in()){ 
+        if (belief == 1){
+        set_leds(0,255,255) 
+        }
+        else if(belief == -1){
+        set_leds(255,255,0)
+        }
+    }
+}
+
+
+function explore_avoid() {
+    var obs_vector = obs_vec()
+    var obs_vector_len = math.vec2.length(obs_vec())
+    var obs_ang = math.atan(obs_vector.y, obs_vector.x)
+
+    if (obs_ang > -ang_range and obs_ang < ang_range and obs_vector_len < obstacle_threshold){
+        goto(max_speed, 0.0)
+    }
+    
+    else{
+        obs_vector = math.vec2.scale(obs_vector, -1.0*max_speed/obs_vector_len)
+  	    goto(obs_vector.x, obs_vector.y)
+    }
+
+}
+
+function follow_avoid(direction) {    
+    var light_vector = filtered_light().vector
+    var obs_vector = obs_vec()
+    var light_vector_len = math.vec2.length(light_vector)
+    var obs_vector_len = math.vec2.length(obs_vec())
+    var obs_ang = math.atan(obs_vector.y, obs_vector.x)
+
+    if (obs_ang > -ang_range and obs_ang < ang_range and obs_vector_len < obstacle_threshold){
+        light_vector = math.vec2.scale(light_vector, direction*scaling_light_factor/light_vector_len)
+        goto(light_vector.x, light_vector.y)
+    }
+
+    else {
+        obs_vector = math.vec2.scale(obs_vector, -1.0*max_speed/obs_vector_len)
+  	    goto(obs_vector.x, obs_vector.y)
+    }
+
+}
+
+function collect_samples(){
+    if (not samples){
+        samples = {.1 = avg_ground()}
+    }
+    else {
+    samples[size(samples)+1] = avg_ground()
+    }
+    sample_average = sample_average + avg_ground()  
+}
+
+function add_value_to_set(set, key, value){
+    if (not set[key]){
+        set[id] = {}
+    }
+    set[key] = value
+}
+
+function size_of_array(array){
+    if (not array){
+        return 0
+    }
+    else {
+        return size(array)
+    }
+}
+
+
+
+function collect_neighbours(){
+    neighbors.collect("opinions", id, new_belief)
+}
+
+
+
+function init() {
+
+
+
+	white_followers.select(id % 2 == 0)
+	black_followers.select((id+1) % 2 == 0)
+
+    if (black_followers.in()){ 
+        belief = black
+    }
+    if (white_followers.in()){ 
+        belief = white
+    }
+    samples = nil 
+    sample_average = 0.0
+
+}
+
+
+
+function step() {
+
+    debug.print("id: ", id,  avg_ground())
+    display_led()
+
+
+    if(white_followers.in()){
+        
+        follow_avoid(white)
+        if(avg_ground() > white_threshold) {
+            white_exploration.join()
+            white_followers.leave()
+            
+        }
+
+
+    }
+
+    if(black_followers.in()) {
+
+        follow_avoid(black)
+        if(avg_ground() < black_threshold) {
+            black_exploration.join()
+            black_followers.leave()
+        }
+
+    }
+
+    if(black_exploration.in()) {
+
+
+        if ((avg_ground() < black_threshold)){
+            explore_avoid()
+            collect_samples()
+            if (size(samples) >= number_of_samples){
+                if (sample_average/number_of_samples > white_threshold){
+                    new_belief = white
+                }
+                else {
+                    new_belief = black
+                }
+                black_exploration.leave()
+                nesters.join()
+            }
+        }
+        
+        else {
+            black_followers.join()
+            black_exploration.leave()
+        }
+        
+    
+    }
+
+
+    if(white_exploration.in()) {
+
+        if ((avg_ground() > white_threshold)){
+            explore_avoid()
+            collect_samples()
+            if (size(samples) >= number_of_samples){
+                if (sample_average/number_of_samples > white_threshold){
+                    new_belief = white
+                }
+                else {
+                    new_belief = black
+                }
+                white_exploration.leave()
+                nesters.join()
+            }
+        }
+
+        else {
+            white_followers.join()
+            white_exploration.leave()
+        }
+        
+    
+    }
+
+    if (nesters.in()){
+        
+        if (avg_ground() < white_threshold and avg_ground() > black_threshold){
+            decision_makers.join()
+            nesters.leave()
+        }
+        else {
+            if (avg_ground() > white_threshold){
+                follow_avoid(black)
+            }
+            else {
+                follow_avoid(white)
+            }
+            
+        }
+
+    }
+
+    if (decision_makers.in()){
+        
+        time_steps = time_steps + 1
+        explore_avoid()
+        if (avg_ground() > white_threshold or avg_ground() < black_threshold){
+            decision_makers.leave()
+            nesters.join()
+        }
+
+        
+        if (time_steps > time_threshold - delta_time ){
+            debug.print("id: ", id, " broadcasting and collecting ")
+            neighbors.broadcast("opinions",{.id=id,.belief=new_belief})
+            collect_neighbours()
+            
+        }
+
+        if (time_steps > time_threshold){
+            
+            debug.print("id: ", id, " decision_making.... ")
+
+            if (neighbors.msgs["opinions"]["aggregate"] >= 1 )
+            {   log(id, " white majority")
+                belief = white
+            }
+
+            else if (neighbors.msgs["opinions"]["aggregate"] <= -1 )
+            {   log(id, " black majority")
+                belief = black
+            }
+
+            else{
+                belief = new_belief
+            }
+
+            
+            log(id," white_neighbors_set ", neighbors.msgs["opinions"]["white"], " black_neighbors_set ", neighbors.msgs["opinions"]["black"], " aggregate ", neighbors.msgs["opinions"]["aggregate"], "belief ", belief," new_belief ", new_belief)
+
+
+            neighbors.ignore("opinions")
+            neighbors.reset("opinions")
+            
+
+            samples = nil
+            time_steps = 0
+            sample_average = 0.0
+            
+            if (belief == white){
+                white_followers.join()
+            }
+            else {
+                black_followers.join()
+            }
+            decision_makers.leave()
+
+        
+        }
+
+
+    }
+
+
+}
+
+
+
+
+function reset() {
+
+}
+
+
+function destroy() {
+
+}

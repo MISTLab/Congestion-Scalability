@@ -1,0 +1,63 @@
+#
+# Creates the namespace
+#
+
+neighbors.msgs = {}
+white = 1
+black = -1
+
+#
+# Collects messages on a specific topic into a table.
+# PARAM topic: The topic to listen to
+#
+neighbors.collect = function(topic, id, new_belief) {
+
+  if (not neighbors.msgs["opinions"]) {
+      neighbors.msgs["opinions"] = {}
+      neighbors.msgs["opinions"]["white"] = 0
+      neighbors.msgs["opinions"]["black"] = 0
+      if (new_belief == white) 
+        {neighbors.msgs["opinions"]["white"] = 1}
+      else 
+        {neighbors.msgs["opinions"]["black"] = 1}
+      neighbors.msgs["opinions"]["aggregate"] = new_belief
+      neighbors.msgs["opinions"][id] = new_belief
+    }
+  
+  else if (not neighbors.msgs["opinions"][id]){    
+    neighbors.msgs["opinions"][id] = new_belief
+    neighbors.msgs["opinions"]["aggregate"] = neighbors.msgs["opinions"]["aggregate"] + new_belief
+  }
+
+
+
+  
+  neighbors.listen(topic, function(top, value, robot) {
+      if (not neighbors.msgs[top]) {
+      neighbors.msgs[top] = {}
+      neighbors.msgs[top]["white"] = 0
+      neighbors.msgs[top]["black"] = 0
+      neighbors.msgs[top]["aggregate"] = 0
+      }
+      #log(id, " Received message on topic ", top , " from " , robot , ": ",value.belief, neighbors.msgs[top]["aggregate"])
+      
+      if (not neighbors.msgs[top][robot]){
+      neighbors.msgs[top][robot] = value.belief
+      neighbors.msgs[top]["aggregate"] = neighbors.msgs[top]["aggregate"] + value.belief
+
+      if (value.belief == white) 
+          {neighbors.msgs[top]["white"] = neighbors.msgs[top]["white"] + 1}
+      else 
+          {neighbors.msgs[top]["black"] = neighbors.msgs[top]["black"] + 1}   
+
+      }
+    })
+}
+
+#
+# Empties the list of messages corresponding to the given topic.
+# PARAM topic: The topic
+#
+neighbors.reset = function(topic) {
+  neighbors.msgs[topic] = nil
+}
