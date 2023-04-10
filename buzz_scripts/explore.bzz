@@ -1,0 +1,32 @@
+include "includes/vec2.bzz"
+
+ANG_RANGE = 10 * math.pi / 180.0  # No turn threshold
+MAX_SPEED = 10 # Maximum speed possible
+function init(){
+}
+function step(){
+  var accum = {}
+  accum.x = 0.0
+  accum.y = 0.0
+  var i = 0
+  while(i < size(proximity)) {
+	accum.x = accum.x + proximity[i].value * math.cos(proximity[i].angle)
+	accum.y = accum.y + proximity[i].value * math.sin(proximity[i].angle)
+	i = i + 1
+  }
+  accum.x = accum.x / size(proximity)
+  accum.y = accum.y / size(proximity)
+  var len = math.sqrt(accum.x * accum.x + accum.y * accum.y)
+  var ang = math.atan(accum.y, accum.x)
+  if(ang > -ANG_RANGE and ang < ANG_RANGE and len < 0.1) {
+	goto(MAX_SPEED, 0.0)
+  }
+  else {
+	if(ang > 0) {
+  	goto(0.0, -MAX_SPEED)
+	}
+	else {
+  	goto(0.0, MAX_SPEED)
+	}
+  }
+}

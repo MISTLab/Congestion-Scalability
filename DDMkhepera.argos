@@ -1,0 +1,153 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="8" />
+    <experiment length="12000"
+                ticks_per_second="10"
+                random_seed="4" />
+  </framework>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+
+    <buzz_controller_kheperaiv id="khivbz">
+      <actuators>
+        <differential_steering implementation="default" />
+        <leds                  implementation="default" medium="leds" />
+        <range_and_bearing     implementation="default" />
+      </actuators>
+      <sensors>
+        <kheperaiv_ground     implementation="rot_z_only" noise_std_dev="0.0"/> 
+        <kheperaiv_proximity  implementation="default" show_rays="false" />
+        <kheperaiv_light      implementation="rot_z_only" show_rays="false" />
+        <kheperaiv_ultrasound implementation="default" show_rays="false" />
+        <kheperaiv_lidar      implementation="default" show_rays="false" />
+        <range_and_bearing    implementation="medium" medium="rab" show_rays="true" noise_std_dev="0" />
+        <positioning          implementation="default" />
+      </sensors>
+
+        <params bytecode_file="../files/buzz_scripts/ddm_khepera.bo" debug_file="../files/buzz_scripts/ddm_khepera.bdb">
+        <!-- <params bytecode_file="../files/buzz_scripts/explore.bo" debug_file="../files/buzz_scripts/explore.bdb"> -->
+        <wheel_turning hard_turn_angle_threshold="90"
+                       soft_turn_angle_threshold="70"
+                       no_turn_angle_threshold="10"
+                       max_speed="50" />
+      </params>
+    </buzz_controller_kheperaiv>
+
+  </controllers>
+
+  <loop_functions library="../files/loop_fun_src/build/libDDM_khepera_loop_function.so"
+                  label="DDM_khepera_loop_function" />
+
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="4.05, 4.05, 5" center="0,0,0.5">
+
+    <box id="wall_north" size="4.05,0.05,0.1" movable="false">
+      <body position="0,2,0" orientation="0,0,0" />
+    </box>
+    <box id="wall_south" size="4.05,0.05,0.1" movable="false">
+      <body position="0,-2,0" orientation="0,0,0" />
+    </box>
+    <box id="wall_east" size="0.05,4,0.1" movable="false">
+      <body position="2,0,0" orientation="0,0,0" />
+    </box>
+    <box id="wall_west" size="0.05,4,0.1" movable="false">
+      <body position="-2,0,0" orientation="0,0,0" />
+    </box>
+
+    <floor id="floor"
+           source="loop_functions"
+           pixels_per_meter="50" />
+    
+    <light id="light"
+           position="0.0,1.95,2"
+           orientation="0,0,0"
+           color="yellow"
+           intensity="1000.0"
+           medium="leds"/>
+    
+    <light id="light1"
+           position="1.4,1.95,2"
+           orientation="0,0,0"
+           color="yellow"
+           intensity="100.0"
+           medium="leds"/>
+    
+    <light id="light2"
+           position="0.7,1.95,2"
+           orientation="0,0,0"
+           color="yellow"
+           intensity="500.0"
+           medium="leds"/> 
+    
+    <light id="light3"
+           position="-1.4,1.95,2"
+           orientation="0,0,0"
+           color="yellow"
+           intensity="100.0"
+           medium="leds"/>
+    
+    <light id="light4"
+           position="-0.7,1.95,2"
+           orientation="0,0,0"
+           color="yellow"
+           intensity="500.0"
+           medium="leds"/>
+
+
+    <distribute>
+      <position method="uniform" min="-1.75,-0.9,0" max="1.75,0.9,0" />
+      <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
+      <entity quantity="2" max_trials="100">
+        <kheperaiv id="kh" rab_range="1.5" rab_data_size="5000">
+          <controller config="khivbz" />
+        </kheperaiv>
+      </entity>
+    </distribute>
+
+
+
+    
+
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <dynamics2d id="dyn2d" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <range_and_bearing id="rab" check_occlusions="false"/>
+    <led id="leds" />
+  </media>
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->    
+  <visualization>
+    <qt-opengl>
+     <user_functions label="buzz_qt" />
+      <camera>
+        <placements>
+          <placement index="0" position="0,0,5" look_at="0,0,0" up="0,1,0" lens_focal_length="30" />
+        </placements>
+      </camera>
+    </qt-opengl>
+  </visualization>  
+
+</argos-configuration>
