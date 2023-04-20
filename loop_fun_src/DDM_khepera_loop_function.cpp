@@ -8,57 +8,39 @@
 using namespace argos;
 
 
-// static std::string POSTITIONFILE_PREFIX   = "pos_";
-// static std::string PERF_PREFIX   = "perf_";
-// Real RAB_RANGE        = 7.0f;
-
-// static const UInt32 DATA_SIZE = 5000;     
-// static const Real        KH_RADIUS        = 0.0704f;
-// static const Real        KH_AREA          = ARGOS_PI * Square(0.0704f);
-// static const std::string KH_CONTROLLER    = "khivbz";
-// static const UInt32      MAX_PLACE_TRIALS = 4000;
+static std::string POSTITIONFILE_PREFIX   = "pos_";
+static std::string PERF_PREFIX   = "perf_";
+    
+static const Real        KH_RADIUS        = 0.0704f;
+static const Real        KH_AREA          = ARGOS_PI * Square(0.0704f);
+static const std::string KH_CONTROLLER    = "khivbz";
+static const UInt32      MAX_PLACE_TRIALS = 4000;
 
 
 void DDMKheperaLoopFunction::Init(TConfigurationNode& t_tree){
     
-    // try {
+    try {
         
-    //     GetNodeAttribute(t_tree, "Robots", unRobots);
-    //     GetNodeAttribute(t_tree, "rab_range", RAB_RANGE);
-    //     GetNodeAttribute(t_tree, "seed", seed);
-    //     GetNodeAttribute(t_tree, "dir", dir);
-    //     GetNodeAttribute(t_tree, "type", type);
-           m_pcFloor = &GetSpace().GetFloorEntity();
-           m_pcRNG = CRandom::CreateRNG("argos");
+        GetNodeAttribute(t_tree, "robots", unRobots);
+        GetNodeAttribute(t_tree, "rab_range", rab_range);
+        GetNodeAttribute(t_tree, "rab_range_beacon", rab_range_beacon);
+        GetNodeAttribute(t_tree, "rab_data_size", unDataSize);
+        GetNodeAttribute(t_tree, "seed", seed);
+        GetNodeAttribute(t_tree, "dir", dir);
+        GetNodeAttribute(t_tree, "out_file", out_file);
+        GetNodeAttribute(t_tree, "fill_ratio_white", fill_ratio_white);
+        GetNodeAttribute(t_tree, "fill_ratio_black", fill_ratio_black);
+
+        m_pcFloor = &GetSpace().GetFloorEntity();
+        m_pcRNG = CRandom::CreateRNG("argos");
            
-      //                        CRANGE_START_POS.GetMax() + Start_state.GetX());
-           
-
-        //    for(int i=0; i<int(4*1); i++){
-        //    for(int j=0; j<int(4.5*1); j++){
-        //        A[i][j] = 0.0;
-        //        std::cout << A[i][j] <<" ";
-        //     }
-
-
-    //     std::string OUT_FNAME; 
-    //     GetNodeAttribute(t_tree, "out_file", OUT_FNAME);
-    //     m_strOutFile = ".txt";
-    //     POSTITIONFILE_PREFIX += OUT_FNAME + "_" + std::to_string(unRobots) + "_" + std::to_string(seed);
-    //     PERF_PREFIX += OUT_FNAME+ "_" + std::to_string(unRobots) + "_" + std::to_string(seed);
+        m_strOutFile = ".txt";
+        POSTITIONFILE_PREFIX += out_file + "_" + std::to_string(unRobots) + "_" + std::to_string(seed);
+        PERF_PREFIX += out_file + "_" + std::to_string(unRobots) + "_" + std::to_string(seed);
     
-    //     float A[unRobots][unRobots];
-    //     float pos[unRobots][2];
-    //     int B[unRobots][unRobots];
-    //     int visit[unRobots];
-    //     int edge = 0;
-    //     int x = 0;
-    //     int y = 0;
 
-    //     // std::cout << "no of robots: " << unRobots << std::endl;
-    //     // std::cout << "rab_range: "  << RAB_RANGE << std::endl;
       
-    //     PlaceUniformly(unRobots,DATA_SIZE);
+        PlaceUniformly(unRobots, unDataSize, rab_range, rab_range_beacon);
 
     //     for(int i=0; i<m_khvec.size(); i++){
     //         pos[i][0] = m_khvec[i]->GetEmbodiedEntity().GetOriginAnchor().Position.GetX();
@@ -127,12 +109,12 @@ void DDMKheperaLoopFunction::Init(TConfigurationNode& t_tree){
     //         Register(tBuzzVM, "spanning_tree", spanning_tree);
     //     }
     
-    // Reset();
+    Reset();
     
-    // }
-    // catch(CARGoSException& ex) {
-    //     THROW_ARGOSEXCEPTION_NESTED("Error initializing the loop functions",ex)
-    // }
+    }
+    catch(CARGoSException& ex) {
+        THROW_ARGOSEXCEPTION_NESTED("Error initializing the loop functions",ex)
+    }
 }
 
 void DDMKheperaLoopFunction::PostStep() {
@@ -347,8 +329,8 @@ void DDMKheperaLoopFunction::CloseFile(std::ofstream& c_stream) {
 CColor DDMKheperaLoopFunction::GetFloorColor(const CVector2& c_position_on_plane) {
     m_frange = m_pcRNG->Uniform(CRange<Real>(0.0f, 1.0f));
     
-    if (c_position_on_plane.GetY() < -1.0f){
-        if (m_frange > 0.9){
+    if (c_position_on_plane.GetY() <= -1.0f and c_position_on_plane.GetY() >= -2.0f){
+        if (m_frange > fill_ratio_black){
             return CColor::WHITE;
         }
         else{
@@ -356,16 +338,10 @@ CColor DDMKheperaLoopFunction::GetFloorColor(const CVector2& c_position_on_plane
         } 
     }
 
-    if (c_position_on_plane.GetY() >= -1.0f && c_position_on_plane.GetY() <= -0.9f){
-        return CColor::BLACK;
-    }
 
-    if (c_position_on_plane.GetY() >= 0.9f && c_position_on_plane.GetY() <= 1.0f){
-        return CColor::WHITE;
-    }
 
-    else if (c_position_on_plane.GetY() > 1.0f){
-        if (m_frange < 0.9){
+    else if (c_position_on_plane.GetY() >= 1.0f and c_position_on_plane.GetY() <= 2.0f){
+        if (m_frange > fill_ratio_white){
             return CColor::WHITE;
         }
         else{
@@ -382,78 +358,118 @@ return CColor::GRAY50;
 
 
 void DDMKheperaLoopFunction::PlaceUniformly(UInt32 un_robots,
-                                  UInt32 un_data_size) {
+                                            UInt32 un_data_size, 
+                                            Real rab_range,
+                                            Real rab_range_beacon
+                                            ) {
     
-//     float pos[un_robots][2];
-//     UInt32 unTrials;
-//     CKheperaIVEntity* pcKH;
-//     std::ostringstream cKHId;
-//     CVector3 cKHPos;
-//     CQuaternion cKHRot;
-//     /* Create a RNG (it is automatically disposed of by ARGoS) */
-//     CRandom::CRNG* pcRNG = CRandom::CreateRNG("argos");
-// //   /* For each robot */
-//     for (size_t i = 0; i < un_robots; ++i) {
-// //     /* Make the id */
-//        cKHId.str("");
-//        cKHId << "kh" << i;
-// //     /* Create the robot in the origin and add it to ARGoS space */
-//        pcKH = new CKheperaIVEntity(
-//                   cKHId.str(),
-//                   KH_CONTROLLER,
-//                   CVector3(),
-//                   CQuaternion(),
-//                   RAB_RANGE,
-//                   un_data_size);
-//         AddEntity(*pcKH);
-// //     /* Add its controller to the list */
-//        m_vecControllers.push_back(
-//                   &dynamic_cast<CBuzzControllerKheperaIV&>(
-//                   pcKH->GetControllableEntity().GetController()));
-//        m_khvec.push_back(pcKH);
+    UInt32 unTrials;
+    CKheperaIVEntity* pcKH;
+    std::ostringstream cKHId;
+    CVector3 cKHPos;
+    CQuaternion cKHRot;
+    /* Create a RNG (it is automatically disposed of by ARGoS) */
+    
+//   /* For each robot */
+    for (size_t i = 0; i < un_robots; ++i) {
+//     /* Make the id */
+       cKHId.str("");
+       cKHId << "kh" << i;
+//     /* Create the robot in the origin and add it to ARGoS space */
+       pcKH = new CKheperaIVEntity(
+                  cKHId.str(),
+                  KH_CONTROLLER,
+                  CVector3(),
+                  CQuaternion(),
+                  rab_range,
+                  un_data_size);
+        AddEntity(*pcKH);
+//     /* Add its controller to the list */
+       m_vecControllers.push_back(
+                  &dynamic_cast<CBuzzControllerKheperaIV&>(
+                  pcKH->GetControllableEntity().GetController()));
+       m_khvec.push_back(pcKH);
        
-//        buzzvm_t tBuzzVM = m_vecControllers[i]->GetBuzzVM();
-//        m_buzz_ctrl.push_back(tBuzzVM);
+       buzzvm_t tBuzzVM = m_vecControllers[i]->GetBuzzVM();
+       m_buzz_ctrl.push_back(tBuzzVM);
 
-// //     /* Try to place it in the arena */
-//        unTrials = 0;
-//        bool bDone;
-//        do {
-//             /* Choose a random position */
-//             ++unTrials;
-//             if (i == 0){
-//                 cKHPos.Set(0.0f,
-//                            0.0f,
-//                            0.0f);
-//                 pos[0][0] = 0.0;
-//                 pos[0][1] = 0.0;
-//             }      
+//     /* Try to place it in the arena */
+       unTrials = 0;
+       bool bDone;
+       do {
+            /* Choose a random position */
+            ++unTrials;
+            
+            
+            CRange<Real> c_range_x(-1.9f, 1.9f);
+            CRange<Real> c_range_y(-0.9f, 0.9f);
 
-//             if (i>0){
-//                 int rid = rand() % i;
-//                 Real r = 0;
-//                 CRadians theta;
-//                 CRange<Real> c_range_x(0.67*RAB_RANGE, 0.90*RAB_RANGE);
-//                 r = pcRNG->Uniform(c_range_x);
-//                 theta = pcRNG->Uniform(CRadians::UNSIGNED_RANGE);
-                
-//                 pos[i][0] = pos[rid][0] + r*Cos(theta);
-//                 pos[i][1] = pos[rid][1] + r*Sin(theta);
 
-//                 cKHPos.Set(pos[i][0],
-//                            pos[i][1],
-//                            0.0f);
-//             }
+            cKHPos.Set(m_pcRNG->Uniform(c_range_x),
+                       m_pcRNG->Uniform(c_range_y),
+                       0.0f);
       
-//             cKHRot.FromAngleAxis(pcRNG->Uniform(CRadians::UNSIGNED_RANGE),
-//                            CVector3::Z);
-//             bDone = MoveEntity(pcKH->GetEmbodiedEntity(), cKHPos, cKHRot);
+            cKHRot.FromAngleAxis(m_pcRNG->Uniform(CRadians::UNSIGNED_RANGE),
+                           CVector3::Z);
+            bDone = MoveEntity(pcKH->GetEmbodiedEntity(), cKHPos, cKHRot);
         
-//         } while (!bDone && unTrials <= MAX_PLACE_TRIALS);
-//         if (!bDone) {
-//             THROW_ARGOSEXCEPTION("Can't place " << cKHId.str());
-//         }
-//         }
+        } while (!bDone && unTrials <= MAX_PLACE_TRIALS);
+        if (!bDone) {
+            THROW_ARGOSEXCEPTION("Can't place " << cKHId.str());
+        }
+        }
+
+    bool bDone;
+    for (size_t i = 0; i < 10; ++i) {
+
+        cKHId.str("");
+        cKHId << "kh" << i + 100;
+//      /* Create the robot in the origin and add it to ARGoS space */
+        pcKH = new CKheperaIVEntity(
+                  cKHId.str(),
+                  KH_CONTROLLER,
+                  CVector3(),
+                  CQuaternion(),
+                  rab_range_beacon,
+                  un_data_size);
+        AddEntity(*pcKH);
+//     /* Add its controller to the list */
+        m_vecControllers.push_back(
+                  &dynamic_cast<CBuzzControllerKheperaIV&>(
+                  pcKH->GetControllableEntity().GetController()));
+        m_khvec.push_back(pcKH);
+       
+       buzzvm_t tBuzzVM = m_vecControllers[i + un_robots]->GetBuzzVM();
+       m_buzz_ctrl.push_back(tBuzzVM);
+
+
+       if (i < 5){
+
+            cKHPos.Set(i*0.9f - 1.8f,
+                       2.2f,
+                       0.0f);
+      
+            cKHRot.FromAngleAxis(-1*CRadians::PI_OVER_TWO,
+                           CVector3::Z);
+            
+       }
+
+       else if (i >= 5){
+            
+            cKHPos.Set((i-5)*0.9f - 1.8f,
+                       -2.2f,
+                       0.0f);
+      
+            cKHRot.FromAngleAxis(CRadians::PI_OVER_TWO,
+                           CVector3::Z);
+
+
+            
+        }    
+
+        bDone = MoveEntity(pcKH->GetEmbodiedEntity(), cKHPos, cKHRot);
+
+    }
 }
 
 

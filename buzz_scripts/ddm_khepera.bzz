@@ -106,6 +106,15 @@ function display_led(){
         set_leds(255,255,0)
         }
     }
+
+    if (beacons.in()){
+        if (id < 105) {
+        set_leds(255,255,255)
+        }
+        else {
+        set_leds(0,0,0)    
+        } 
+    }
 }
 
 
@@ -181,7 +190,7 @@ function collect_neighbours(){
 function init() {
 
     neighbors.listen("zones", function(rid, data) {
-        if (id < 101){
+        if (id < 100){
             if (data.zone == "white"){
                 zone = "white"
             }
@@ -194,7 +203,7 @@ function init() {
 
 	white_followers.select(id % 2 == 0 and id < 100)
 	black_followers.select((id+1) % 2 == 0  and id < 100)
-    beacons.select(id > 100)
+    beacons.select(id >= 100)
 
     if (black_followers.in()){ 
         belief = black
@@ -215,10 +224,10 @@ function step() {
     display_led()
 
     if (beacons.in()){
-        if (id > 100 and id < 106){
+        if (id >= 100 and id < 105){
         neighbors.broadcast("zones", {.id=id, .zone = "white"})
         }
-        if (id > 105 and id < 111){
+        if (id >= 105 and id < 110){
         neighbors.broadcast("zones", {.id=id, .zone = "black"})
         }
     }

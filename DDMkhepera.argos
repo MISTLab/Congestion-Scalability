@@ -44,24 +44,40 @@
   </controllers>
 
   <loop_functions library="../files/loop_fun_src/build/libDDM_khepera_loop_function.so"
-                  label="DDM_khepera_loop_function" />
+                  label="DDM_khepera_loop_function" 
+                  robots = "100"
+                  dir = "directory"
+                  seed = "4"
+                  rab_range = "0.4"
+                  rab_range_beacon = "1.2"
+                  rab_data_size = "5000"
+                  fill_ratio_white = "0.1"
+                  fill_ratio_black = "0.9"
+                  out_file = "out"/>
+
 
 
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="4.05, 4.05, 5" center="0,0,0.5">
+  <arena size="4.05, 4.85, 5" center="0,0,0.5">
 
+    <box id="wall_norther" size="4.05,0.05,0.1" movable="false">
+      <body position="0,2.4,0" orientation="0,0,0" />
+    </box>
+    <box id="wall_souther" size="4.05,0.05,0.1" movable="false">
+      <body position="0,-2.4,0" orientation="0,0,0" />
+    </box>
     <box id="wall_north" size="4.05,0.05,0.1" movable="false">
       <body position="0,2,0" orientation="0,0,0" />
     </box>
     <box id="wall_south" size="4.05,0.05,0.1" movable="false">
       <body position="0,-2,0" orientation="0,0,0" />
     </box>
-    <box id="wall_east" size="0.05,4,0.1" movable="false">
+    <box id="wall_east" size="0.05,4.85,0.1" movable="false">
       <body position="2,0,0" orientation="0,0,0" />
     </box>
-    <box id="wall_west" size="0.05,4,0.1" movable="false">
+    <box id="wall_west" size="0.05,4.85,0.1" movable="false">
       <body position="-2,0,0" orientation="0,0,0" />
     </box>
 
@@ -105,7 +121,7 @@
            medium="leds"/>
 
 
-    <distribute>
+    <!-- <distribute>
       <position method="uniform" min="-1.75,-0.9,0" max="1.75,0.9,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
       <entity quantity="2" max_trials="100">
@@ -113,7 +129,7 @@
           <controller config="khivbz" />
         </kheperaiv>
       </entity>
-    </distribute>
+    </distribute> -->
 
 
 

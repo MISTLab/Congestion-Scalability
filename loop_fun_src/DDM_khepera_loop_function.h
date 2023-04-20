@@ -23,7 +23,10 @@ public:
     virtual void PostStep();
     
     virtual void PlaceUniformly(UInt32 un_robots,
-                       UInt32 un_data_size);
+                                UInt32 un_data_size, 
+                                Real rab_range,
+                                Real rab_range_beacon
+                                );
 
     virtual CColor GetFloorColor(const CVector2& c_position_on_plane);
 
@@ -38,7 +41,9 @@ private:
     int seed;
 
     UInt32 unRobots;
-    Real RAB_RANGE;
+    UInt32 unDataSize;
+    Real rab_range;
+    Real rab_range_beacon;
 
     std::vector<buzzvm_t> m_buzz_ctrl;
     std::vector<CBuzzControllerKheperaIV*> m_vecControllers;
@@ -51,12 +56,12 @@ private:
 
     std::string m_strOutFile;
     std::string dir;
-    int type;
+    std::string out_file;
     std::ofstream m_posFile;
     std::ofstream m_perfFile;
 
-    float fill_ratio_a = 0.5;
-    float fill_ratio_b = 0.5;
+    Real fill_ratio_white = 0.5;
+    Real fill_ratio_black = 0.5;
 
     CRandom::CRNG* m_pcRNG;
 
