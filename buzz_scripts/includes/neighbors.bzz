@@ -10,23 +10,24 @@ black = -1
 # Collects messages on a specific topic into a table.
 # PARAM topic: The topic to listen to
 #
-neighbors.collect = function(topic, id, new_belief) {
+neighbors.collect = function(topic, id, new_belief, zone_collected) {
 
   if (not neighbors.msgs["opinions"]) {
       neighbors.msgs["opinions"] = {}
       neighbors.msgs["opinions"]["white"] = 0
       neighbors.msgs["opinions"]["black"] = 0
-      if (new_belief == white) 
+      neighbors.msgs["opinions"]["aggregate"] = 0
+      if (zone_collected == white) 
         {neighbors.msgs["opinions"]["white"] = 1}
       else 
         {neighbors.msgs["opinions"]["black"] = 1}
-      neighbors.msgs["opinions"]["aggregate"] = new_belief
-      neighbors.msgs["opinions"][id] = new_belief
+        neighbors.msgs["opinions"]["aggregate"] = zone_collected*new_belief
+        neighbors.msgs["opinions"][id] = new_belief
     }
   
   else if (not neighbors.msgs["opinions"][id]){    
     neighbors.msgs["opinions"][id] = new_belief
-    neighbors.msgs["opinions"]["aggregate"] = neighbors.msgs["opinions"]["aggregate"] + new_belief
+    neighbors.msgs["opinions"]["aggregate"] = neighbors.msgs["opinions"]["aggregate"] + zone_collected*new_belief
   }
 
 
@@ -39,13 +40,13 @@ neighbors.collect = function(topic, id, new_belief) {
       neighbors.msgs[top]["black"] = 0
       neighbors.msgs[top]["aggregate"] = 0
       }
-      #log(id, " Received message on topic ", top , " from " , robot , ": ",value.belief, neighbors.msgs[top]["aggregate"])
+      
       
       if (not neighbors.msgs[top][robot]){
       neighbors.msgs[top][robot] = value.belief
-      neighbors.msgs[top]["aggregate"] = neighbors.msgs[top]["aggregate"] + value.belief
+      neighbors.msgs[top]["aggregate"] = neighbors.msgs[top]["aggregate"] + value.zone_collected*value.belief
 
-      if (value.belief == white) 
+      if (value.zone_collected == white) 
           {neighbors.msgs[top]["white"] = neighbors.msgs[top]["white"] + 1}
       else 
           {neighbors.msgs[top]["black"] = neighbors.msgs[top]["black"] + 1}   

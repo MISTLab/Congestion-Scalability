@@ -13,6 +13,8 @@ black_threshold = 0.25
 time_threshold = 50
 delta_time = 20
 
+zone = "nest"
+
 white = 1 
 black = -1
 
@@ -34,7 +36,7 @@ nesters = swarm.create(5)
 decision_makers = swarm.create(6)
 white_exploration = swarm.create(1)
 black_exploration = swarm.create(4)
-
+beacons = swarm.create(7)
 
 
 
@@ -171,17 +173,28 @@ function size_of_array(array){
 
 
 function collect_neighbours(){
-    neighbors.collect("opinions", id, new_belief)
+    neighbors.collect("opinions", id, new_belief, zone_collected)
 }
 
 
 
 function init() {
 
+    neighbors.listen("zones", function(rid, data) {
+        if (id < 101){
+            if (data.zone == "white"){
+                zone = "white"
+            }
+            if (data.zone == "black"){
+                zone = "black"
+            }
+        }
+    })
 
 
-	white_followers.select(id % 2 == 0)
-	black_followers.select((id+1) % 2 == 0)
+	white_followers.select(id % 2 == 0 and id < 100)
+	black_followers.select((id+1) % 2 == 0  and id < 100)
+    beacons.select(id > 100)
 
     if (black_followers.in()){ 
         belief = black
@@ -198,17 +211,25 @@ function init() {
 
 function step() {
 
-    debug.print("id: ", id,  avg_ground())
+    debug.print("id: ", id,  " zone: ", zone, " estimate: ", new_belief)
     display_led()
+
+    if (beacons.in()){
+        if (id > 100 and id < 106){
+        neighbors.broadcast("zones", {.id=id, .zone = "white"})
+        }
+        if (id > 105 and id < 111){
+        neighbors.broadcast("zones", {.id=id, .zone = "black"})
+        }
+    }
 
 
     if(white_followers.in()){
         
         follow_avoid(white)
-        if(avg_ground() > white_threshold) {
+        if (zone == "white") {
             white_exploration.join()
             white_followers.leave()
-            
         }
 
 
@@ -217,7 +238,7 @@ function step() {
     if(black_followers.in()) {
 
         follow_avoid(black)
-        if(avg_ground() < black_threshold) {
+        if(zone == "black") {
             black_exploration.join()
             black_followers.leave()
         }
@@ -227,22 +248,19 @@ function step() {
     if(black_exploration.in()) {
 
 
-        if ((avg_ground() < black_threshold)){
+        if (zone == "black"){
             explore_avoid()
             collect_samples()
             if (size(samples) >= number_of_samples){
-                if (sample_average/number_of_samples > white_threshold){
-                    new_belief = white
-                }
-                else {
-                    new_belief = black
-                }
+                new_belief = sample_average/number_of_samples
+                zone_collected = black
                 black_exploration.leave()
                 nesters.join()
             }
         }
         
         else {
+            zone = "nest"
             black_followers.join()
             black_exploration.leave()
         }
@@ -253,22 +271,19 @@ function step() {
 
     if(white_exploration.in()) {
 
-        if ((avg_ground() > white_threshold)){
+        if (zone == "white"){
             explore_avoid()
             collect_samples()
             if (size(samples) >= number_of_samples){
-                if (sample_average/number_of_samples > white_threshold){
-                    new_belief = white
-                }
-                else {
-                    new_belief = black
-                }
+                new_belief = sample_average/number_of_samples
+                zone_collected = white
                 white_exploration.leave()
                 nesters.join()
             }
         }
 
         else {
+            zone = "nest"
             white_followers.join()
             white_exploration.leave()
         }
@@ -278,15 +293,15 @@ function step() {
 
     if (nesters.in()){
         
-        if (avg_ground() < white_threshold and avg_ground() > black_threshold){
+        if (zone == "nest"){
             decision_makers.join()
             nesters.leave()
         }
         else {
-            if (avg_ground() > white_threshold){
+            if (zone == "white"){
                 follow_avoid(black)
             }
-            else {
+            else if(zone == "black"){
                 follow_avoid(white)
             }
             
@@ -298,7 +313,7 @@ function step() {
         
         time_steps = time_steps + 1
         explore_avoid()
-        if (avg_ground() > white_threshold or avg_ground() < black_threshold){
+        if (zone == "white" or zone == "black"){
             decision_makers.leave()
             nesters.join()
         }
@@ -306,31 +321,33 @@ function step() {
         
         if (time_steps > time_threshold - delta_time ){
             debug.print("id: ", id, " broadcasting and collecting ")
-            neighbors.broadcast("opinions",{.id=id,.belief=new_belief})
+            neighbors.broadcast("opinions",{.id=id,.belief=new_belief,.zone_collected=zone_collected})
             collect_neighbours()
-            
         }
 
         if (time_steps > time_threshold){
             
             debug.print("id: ", id, " decision_making.... ")
 
-            if (neighbors.msgs["opinions"]["aggregate"] >= 1 )
-            {   log(id, " white majority")
-                belief = white
-            }
+            if (neighbors.msgs["opinions"]["aggregate"] > 0)
+            {white_followers.join()}
 
-            else if (neighbors.msgs["opinions"]["aggregate"] <= -1 )
-            {   log(id, " black majority")
-                belief = black
-            }
+            else if (neighbors.msgs["opinions"]["aggregate"] < 0)
+            {black_followers.join()}
 
             else{
-                belief = new_belief
+                if (zone_collected == white){
+                    white_followers.join()
+                }
+                else if (zone_collected == black){
+                    black_followers.join()
+                }
             }
 
             
-            log(id," white_neighbors_set ", neighbors.msgs["opinions"]["white"], " black_neighbors_set ", neighbors.msgs["opinions"]["black"], " aggregate ", neighbors.msgs["opinions"]["aggregate"], "belief ", belief," new_belief ", new_belief)
+            log(id," white_neighbors_set ", neighbors.msgs["opinions"]["white"], " black_neighbors_set ", 
+            neighbors.msgs["opinions"]["black"], " aggregate ", neighbors.msgs["opinions"]["aggregate"], "zone_collected ",
+            zone_collected," new_belief ", new_belief)
 
 
             neighbors.ignore("opinions")
@@ -340,13 +357,8 @@ function step() {
             samples = nil
             time_steps = 0
             sample_average = 0.0
+            new_belief = 0.0
             
-            if (belief == white){
-                white_followers.join()
-            }
-            else {
-                black_followers.join()
-            }
             decision_makers.leave()
 
         
@@ -354,6 +366,8 @@ function step() {
 
 
     }
+
+    zone = "nest" #clear zone for next step
 
 
 }
