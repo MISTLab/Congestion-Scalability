@@ -1,0 +1,6 @@
+.vscode/settings.json
+.txt
+loop_fun_src/build/
+data_files/
+loop_fun_src/build/libDDM_khepera_loop_function.so
+loop_fun_src/build/CMakeFiles/DDM_khepera_loop_function.dir/DDM_khepera_loop_function.cpp.o

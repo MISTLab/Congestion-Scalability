@@ -37,7 +37,7 @@ public:
 private:
 
     bool m_isExperimentFinished = false;
-    bool m_istreeExperimentFinished = false;
+    
     int seed;
 
     UInt32 unRobots;

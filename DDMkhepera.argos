@@ -6,7 +6,7 @@
   <!-- ************************* -->
   <framework>
     <system threads="8" />
-    <experiment length="12000"
+    <experiment length="6000"
                 ticks_per_second="10"
                 random_seed="4" />
   </framework>
@@ -45,15 +45,15 @@
 
   <loop_functions library="../files/loop_fun_src/build/libDDM_khepera_loop_function.so"
                   label="DDM_khepera_loop_function" 
-                  robots = "100"
-                  dir = "directory"
+                  robots = "20"
+                  dir = "/home/somz/Projects/Hierarchies_to_scale/khepera-simulations/files/data_files/"
                   seed = "4"
                   rab_range = "0.4"
                   rab_range_beacon = "1.2"
                   rab_data_size = "5000"
                   fill_ratio_white = "0.1"
-                  fill_ratio_black = "0.9"
-                  out_file = "out"/>
+                  fill_ratio_black = "0.1"
+                  out_file = "out_hard"/>
 
 
 
@@ -92,7 +92,7 @@
            intensity="1000.0"
            medium="leds"/>
     
-    <light id="light1"
+    <!-- <light id="light1"
            position="1.4,1.95,2"
            orientation="0,0,0"
            color="yellow"
@@ -118,7 +118,7 @@
            orientation="0,0,0"
            color="yellow"
            intensity="500.0"
-           medium="leds"/>
+           medium="leds"/> -->
 
 
     <!-- <distribute>

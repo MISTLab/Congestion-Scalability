@@ -16,18 +16,30 @@ neighbors.collect = function(topic, id, new_belief, zone_collected) {
       neighbors.msgs["opinions"] = {}
       neighbors.msgs["opinions"]["white"] = 0
       neighbors.msgs["opinions"]["black"] = 0
-      neighbors.msgs["opinions"]["aggregate"] = 0
+      neighbors.msgs["opinions"]["aggregate_black"] = 0
+      neighbors.msgs["opinions"]["aggregate_white"] = 0
       if (zone_collected == white) 
-        {neighbors.msgs["opinions"]["white"] = 1}
+        {neighbors.msgs["opinions"]["white"] = 1
+         neighbors.msgs["opinions"]["aggregate_white"] = new_belief
+        }
       else 
-        {neighbors.msgs["opinions"]["black"] = 1}
-        neighbors.msgs["opinions"]["aggregate"] = zone_collected*new_belief
+        {neighbors.msgs["opinions"]["black"] = 1
+         neighbors.msgs["opinions"]["aggregate_black"] = new_belief
+        }
+        
         neighbors.msgs["opinions"][id] = new_belief
     }
   
   else if (not neighbors.msgs["opinions"][id]){    
+  
     neighbors.msgs["opinions"][id] = new_belief
-    neighbors.msgs["opinions"]["aggregate"] = neighbors.msgs["opinions"]["aggregate"] + zone_collected*new_belief
+    if (zone_collected == white) {
+    neighbors.msgs["opinions"]["aggregate_white"] = neighbors.msgs["opinions"]["aggregate_white"] + new_belief
+    }
+    else {
+    neighbors.msgs["opinions"]["aggregate_black"] = neighbors.msgs["opinions"]["aggregate_black"] + new_belief
+    }
+  
   }
 
 
@@ -38,18 +50,23 @@ neighbors.collect = function(topic, id, new_belief, zone_collected) {
       neighbors.msgs[top] = {}
       neighbors.msgs[top]["white"] = 0
       neighbors.msgs[top]["black"] = 0
-      neighbors.msgs[top]["aggregate"] = 0
+      neighbors.msgs[top]["aggregate_white"] = 0
+      neighbors.msgs[top]["aggregate_black"] = 0
       }
       
       
       if (not neighbors.msgs[top][robot]){
       neighbors.msgs[top][robot] = value.belief
-      neighbors.msgs[top]["aggregate"] = neighbors.msgs[top]["aggregate"] + value.zone_collected*value.belief
 
       if (value.zone_collected == white) 
-          {neighbors.msgs[top]["white"] = neighbors.msgs[top]["white"] + 1}
+          {neighbors.msgs[top]["white"] = neighbors.msgs[top]["white"] + 1
+           neighbors.msgs[top]["aggregate_white"] = neighbors.msgs[top]["aggregate_white"] + value.belief
+          }
       else 
-          {neighbors.msgs[top]["black"] = neighbors.msgs[top]["black"] + 1}   
+          {neighbors.msgs[top]["black"] = neighbors.msgs[top]["black"] + 1
+           neighbors.msgs[top]["aggregate_black"] = neighbors.msgs[top]["aggregate_black"] + value.belief
+
+          }   
 
       }
     })
