@@ -16,8 +16,8 @@ neighbors.collect = function(topic, id, new_belief, zone_collected) {
       neighbors.msgs["opinions"] = {}
       neighbors.msgs["opinions"]["white"] = 0
       neighbors.msgs["opinions"]["black"] = 0
-      neighbors.msgs["opinions"]["aggregate_black"] = 0
-      neighbors.msgs["opinions"]["aggregate_white"] = 0
+      neighbors.msgs["opinions"]["aggregate_black"] = 0.0
+      neighbors.msgs["opinions"]["aggregate_white"] = 0.0
       if (zone_collected == white) 
         {neighbors.msgs["opinions"]["white"] = 1
          neighbors.msgs["opinions"]["aggregate_white"] = new_belief
@@ -50,8 +50,8 @@ neighbors.collect = function(topic, id, new_belief, zone_collected) {
       neighbors.msgs[top] = {}
       neighbors.msgs[top]["white"] = 0
       neighbors.msgs[top]["black"] = 0
-      neighbors.msgs[top]["aggregate_white"] = 0
-      neighbors.msgs[top]["aggregate_black"] = 0
+      neighbors.msgs[top]["aggregate_white"] = 0.0
+      neighbors.msgs[top]["aggregate_black"] = 0.0
       }
       
       
