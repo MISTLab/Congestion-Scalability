@@ -22,7 +22,7 @@ white = 1
 black = -1
 
 number_of_samples = 50  
-belief = 0.5
+belief = 0.5 
 new_belief = 0.5
 
 sample_average = 0.0
@@ -172,7 +172,7 @@ function follow_avoid(direction) {
     
     if (obs_ang > -ang_range and obs_ang < ang_range and obs_vector_len < obstacle_threshold){
         
-        if (filtered_light().number >= 2) {
+        if (filtered_light().number >= 0) {
             light_vector = math.vec2.scale(light_vector, direction*scaling_light_factor/light_vector_len)
             goto(light_vector.x, light_vector.y)
             prev_light_vector = light_vector
@@ -263,7 +263,7 @@ function init() {
 
 function step() {
 
-    debug.print("id: ", id,  " state: ", BVMSTATE, " estimate: ", new_belief, " light_number: ", filtered_light().number)
+    debug.print("id: ", id,  " state: ", BVMSTATE)
     
 
     if (beacons.in()){
@@ -372,7 +372,7 @@ function step() {
 
         
         if (time_steps > time_threshold - delta_time ){
-            debug.print("id: ", id, " broadcasting and collecting ")
+            #debug.print("id: ", id, " broadcasting and collecting ")
             neighbors.broadcast("opinions",{.id=id,.belief=new_belief,.zone_collected=zone_collected})
             collect_neighbours()
         }
@@ -380,7 +380,7 @@ function step() {
         if (time_steps > time_threshold){
             
             decision_flag = 1
-            debug.print("id: ", id, " decision_making.... ")
+            #debug.print("id: ", id, " decision_making.... ")
             
             white_neighbors = neighbors.msgs["opinions"]["white"]
             white_aggregate = neighbors.msgs["opinions"]["aggregate_white"]
@@ -413,7 +413,7 @@ function step() {
                 }
             }
 
-            log(id," white_neighbors ", white_neighbors, " black_neighbors ", black_neighbors, " white_aggregate ", white_aggregate, " black_aggregate ", black_aggregate, " white_ratio ", white_ratio, " black_ratio ", black_ratio, " zone_collected ", zone_collected, " new_belief ", new_belief)
+            #log(id," white_neighbors ", white_neighbors, " black_neighbors ", black_neighbors, " white_aggregate ", white_aggregate, " black_aggregate ", black_aggregate, " white_ratio ", white_ratio, " black_ratio ", black_ratio, " zone_collected ", zone_collected, " new_belief ", new_belief)
             #log(id," white_neighbors_set ", neighbors.msgs["opinions"]["white"], " black_neighbors_set ", 
             #neighbors.msgs["opinions"]["black"], " aggregate ", neighbors.msgs["opinions"]["aggregate"], "zone_collected ",
             #zone_collected," new_belief ", new_belief)
