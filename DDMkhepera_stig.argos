@@ -32,8 +32,10 @@
         <positioning          implementation="default" />
       </sensors>
 
-        <params bytecode_file="../files/buzz_scripts/ddm_khepera.bo" debug_file="../files/buzz_scripts/ddm_khepera.bdb">
+        <!-- <params bytecode_file="../files/buzz_scripts/ddm_khepera.bo" debug_file="../files/buzz_scripts/ddm_khepera.bdb"> -->
         <!-- <params bytecode_file="../files/buzz_scripts/explore.bo" debug_file="../files/buzz_scripts/explore.bdb"> -->
+        <!-- <params bytecode_file="../files/buzz_scripts/ddm_khepera_virtual_stig.bo" debug_file="../files/buzz_scripts/ddm_khepera_virtual_stig.bdb"> -->
+        <params bytecode_file="../files/buzz_scripts/ddm_khepera_virtual_stig_minimal.bo" debug_file="../files/buzz_scripts/ddm_khepera_virtual_stig_minimal.bdb">
         <wheel_turning hard_turn_angle_threshold="90"
                        soft_turn_angle_threshold="70"
                        no_turn_angle_threshold="10"
@@ -45,15 +47,15 @@
 
   <loop_functions library="../files/loop_fun_src/build/libDDM_khepera_loop_function.so"
                   label="DDM_khepera_loop_function" 
-                  robots = "80"
-                  dir = "/home/somz/Projects/Hierarchies_to_scale/khepera-simulations/files/data_files/"
+                  robots = "2"
+                  dir = "/home/somz/Projects/Hierarchies_to_scale/khepera-simulations/files/debug_files/"
                   seed = "4"
-                  rab_range = "0.4"
+                  rab_range = "1.0"
                   rab_range_beacon = "1.2"
-                  rab_data_size = "5000"
+                  rab_data_size = "75"
                   fill_ratio_white = "0.1"
                   fill_ratio_black = "0.9"
-                  out_file = "out"/>
+                  out_file = "communication_congestion"/>
 
 
 
@@ -92,7 +94,7 @@
            intensity="1000.0"
            medium="leds"/>
     
-    <light id="light1"
+    <!-- <light id="light1"
            position="1.4,1.95,2"
            orientation="0,0,0"
            color="yellow"
@@ -118,14 +120,14 @@
            orientation="0,0,0"
            color="yellow"
            intensity="500.0"
-           medium="leds"/>
+           medium="leds"/> -->
 
 
     <!-- <distribute>
       <position method="uniform" min="-1.75,-0.9,0" max="1.75,0.9,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
       <entity quantity="2" max_trials="100">
-        <kheperaiv id="kh" rab_range="1.5" rab_data_size="5000">
+        <kheperaiv id="kh" rab_range="0.4" rab_data_size="5000">
           <controller config="khivbz" />
         </kheperaiv>
       </entity>
