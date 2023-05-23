@@ -10,12 +10,11 @@ set -e
 # 1 -> star
 
 
-
 # Submit jobs for transport
 
-for SEED in 4
-do      
-    for ROBOTS in 60
+for SEED in $(seq 1 30)
+    do      
+    for ROBOTS in 2 4 6 8 10 20 40 60 80 100
         do
             for TYPE in 0
               do

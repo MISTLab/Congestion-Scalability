@@ -1,15 +1,22 @@
-
-# Consider dependencies only in project.
-set(CMAKE_DEPENDS_IN_PROJECT_ONLY OFF)
-
 # The set of languages for which implicit dependencies are needed:
 set(CMAKE_DEPENDS_LANGUAGES
+  "CXX"
+  )
+# The set of files for implicit dependencies of each language:
+set(CMAKE_DEPENDS_CHECK_CXX
+  "/home/soma1701/installations/hierarchies_to_scale/loop_fun_src/DDM_khepera_loop_function.cpp" "/home/soma1701/installations/hierarchies_to_scale/loop_fun_src/build/CMakeFiles/DDM_khepera_loop_function.dir/DDM_khepera_loop_function.cpp.o"
+  )
+set(CMAKE_CXX_COMPILER_ID "GNU")
+
+# Preprocessor definitions for this target.
+set(CMAKE_TARGET_DEFINITIONS_CXX
+  "DDM_khepera_loop_function_EXPORTS"
   )
 
-# The set of dependency files which are needed:
-set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/somz/Projects/Hierarchies_to_scale/khepera-simulations/files/loop_fun_src/DDM_khepera_loop_function.cpp" "CMakeFiles/DDM_khepera_loop_function.dir/DDM_khepera_loop_function.cpp.o" "gcc" "CMakeFiles/DDM_khepera_loop_function.dir/DDM_khepera_loop_function.cpp.o.d"
-  "/home/somz/Projects/Hierarchies_to_scale/khepera-simulations/files/loop_fun_src/build/DDM_khepera_loop_function_autogen/mocs_compilation.cpp" "CMakeFiles/DDM_khepera_loop_function.dir/DDM_khepera_loop_function_autogen/mocs_compilation.cpp.o" "gcc" "CMakeFiles/DDM_khepera_loop_function.dir/DDM_khepera_loop_function_autogen/mocs_compilation.cpp.o.d"
+# The include file search paths:
+set(CMAKE_CXX_TARGET_INCLUDE_PATH
+  "/home/soma1701/installations/my_stuff/include"
+  "../"
   )
 
 # Targets to which this target links.
