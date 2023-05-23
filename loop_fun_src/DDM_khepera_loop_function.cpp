@@ -112,6 +112,71 @@ void DDMKheperaLoopFunction::PostStep()
     }
     m_perfFile << "," << m_isExperimentFinished << std::endl;
     m_posFile << "," << m_isExperimentFinished << std::endl;
+    }
+
+    if (out_file == "communication_congestion"){
+
+        UInt32 collisions = 0;
+        UInt32 conflicts = 0;
+        std::string state;
+        Real estimate = 0.0f;
+        UInt32 convergence_white = 0;
+        UInt32 convergence_black = 0;
+        UInt32 unassigned = 0;
+        UInt32 white_neighbors = 0;
+        UInt32 black_neighbors = 0;
+        float white_neighbors_ratio = 0.0f;
+        float black_neighbors_ratio = 0.0f;
+        float white_neighbors_aggregate = 0.0f;
+        float black_neighbors_aggregate = 0.0f;
+        bool decision_flag = false;
+
+        int zone_collected = 0;
+
+        m_perfFile << GetSpace().GetSimulationClock() << "," << seed << "," << unRobots;
+        m_posFile << GetSpace().GetSimulationClock() << "," << seed << "," << unRobots;
+        for (int i = 0; i < unRobots; i++)
+        {
+
+            buzzvm_t vm = m_buzz_ctrl[i];
+            collisions = buzzobj_getint(BuzzGet(vm, "collisions"));
+            conflicts = buzzobj_getint(BuzzGet(vm, "conflicts"));
+            zone_collected = buzzobj_getint(BuzzGet(vm, "zone_collected"));
+            state = buzzobj_getstring(BuzzGet(vm, "BVMSTATE"));
+            estimate = buzzobj_getfloat(BuzzGet(vm, "new_belief"));
+            white_neighbors_aggregate = buzzobj_getfloat(BuzzGet(vm, "white_ratio"));
+            black_neighbors_aggregate = buzzobj_getfloat(BuzzGet(vm, "black_ratio"));
+            decision_flag = buzzobj_getint(BuzzGet(vm, "decision_flag"));
+
+        // std::cout<<i<<","<<collisions<<","<<conflicts<<","<<state<<","<<estimate<<","<<white_neighbors_aggregate<<","<<black_neighbors_aggregate<<","<<decision_flag<<std::endl;
+
+        m_perfFile << "," << i << "," << collisions << "," << conflicts << "," << state << "," << estimate << "," << white_neighbors_aggregate << "," << black_neighbors_aggregate << "," << decision_flag;
+        if (state == "white_exploration" || state == "white_followers" || (state == "nesters_white") || (state == "decision_makers_white"))
+        {
+            convergence_white += 1;
+        }
+        else if (state == "black_followers" || state == "black_exploration" || (state == "nesters_black") || (state == "decision_makers_black"))
+        {
+            convergence_black += 1;
+        }
+        else
+        {
+            unassigned += 1;
+        }
+
+        m_posFile << "," << i << "," << m_khvec[i]->GetEmbodiedEntity().GetOriginAnchor().Position.GetX() << "," << m_khvec[i]->GetEmbodiedEntity().GetOriginAnchor().Position.GetY() << "," << state;
+    }
+
+    if (convergence_white == unRobots || convergence_black == unRobots)
+    {
+        m_isExperimentFinished = true;
+        std::cout << "experiment over ...." << std::endl;
+    }
+    m_perfFile << "," << m_isExperimentFinished << std::endl;
+    m_posFile << "," << m_isExperimentFinished << std::endl;
+
+    }
+
 }
 
 void DDMKheperaLoopFunction::Reset()
