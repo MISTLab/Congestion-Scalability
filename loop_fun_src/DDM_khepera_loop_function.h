@@ -27,6 +27,12 @@ public:
                                 Real rab_range,
                                 Real rab_range_beacon
                                 );
+    
+    virtual void PlaceUniformlyZones(UInt32 un_robots,
+                                UInt32 un_data_size, 
+                                Real rab_range,
+                                Real rab_range_beacon
+                                );
 
     virtual CColor GetFloorColor(const CVector2& c_position_on_plane);
 

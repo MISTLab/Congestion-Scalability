@@ -38,7 +38,9 @@ void DDMKheperaLoopFunction::Init(TConfigurationNode &t_tree)
         POSTITIONFILE_PREFIX += out_file + "_" + std::to_string(unRobots) + "_" + std::to_string(seed);
         PERF_PREFIX += out_file + "_" + std::to_string(unRobots) + "_" + std::to_string(seed);
 
+
         PlaceUniformly(unRobots, unDataSize, rab_range, rab_range_beacon);
+        
 
         Reset();
     }
@@ -176,6 +178,72 @@ void DDMKheperaLoopFunction::PostStep()
     m_posFile << "," << m_isExperimentFinished << std::endl;
 
     }
+
+    if (out_file == "divison_labour"){
+        UInt32 collisions = 0;
+        UInt32 conflicts = 0;
+        std::string state;
+        Real estimate = 0.0f;
+        UInt32 belief = 0;
+        UInt32 convergence_white = 0;
+        UInt32 convergence_black = 0;
+        UInt32 unassigned = 0;
+        UInt32 white_neighbors = 0;
+        UInt32 black_neighbors = 0;
+        float white_neighbors_ratio = 0.0f;
+        float black_neighbors_ratio = 0.0f;
+        float white_neighbors_aggregate = 0.0f;
+        float black_neighbors_aggregate = 0.0f;
+        bool decision_flag = false;
+
+        std::string zone_collected;
+
+        m_perfFile << GetSpace().GetSimulationClock() << "," << seed << "," << unRobots;
+        m_posFile << GetSpace().GetSimulationClock() << "," << seed << "," << unRobots;
+        for (int i = 0; i < unRobots; i++)
+        {
+
+            buzzvm_t vm = m_buzz_ctrl[i];
+            collisions = buzzobj_getint(BuzzGet(vm, "collisions"));
+            conflicts = buzzobj_getint(BuzzGet(vm, "conflicts"));
+            zone_collected = buzzobj_getstring(BuzzGet(vm, "zone_assigned"));
+            belief = buzzobj_getint(BuzzGet(vm, "belief"));
+            estimate = buzzobj_getfloat(BuzzGet(vm, "new_belief"));
+            white_neighbors_aggregate = buzzobj_getfloat(BuzzGet(vm, "others_belief_white"));
+            black_neighbors_aggregate = buzzobj_getfloat(BuzzGet(vm, "others_belief_black"));
+
+        // std::cout<<i<<","<<collisions<<","<<conflicts<<","<<state<<","<<estimate<<","<<white_neighbors_aggregate<<","<<black_neighbors_aggregate<<","<<decision_flag<<std::endl;
+
+        m_perfFile << "," << i << "," << collisions << "," << conflicts << "," << belief << "," << estimate << "," << white_neighbors_aggregate << "," << black_neighbors_aggregate << "," << zone_collected;
+        if (belief == 1)
+        {
+            convergence_white += 1;
+        }
+        else if (belief == -1)
+        {
+            convergence_black += 1;
+        }
+        else
+        {
+            unassigned += 1;
+        }
+
+        m_posFile << "," << i << "," << m_khvec[i]->GetEmbodiedEntity().GetOriginAnchor().Position.GetX() << "," << m_khvec[i]->GetEmbodiedEntity().GetOriginAnchor().Position.GetY();
+    }
+
+    // std::cout << "white convergence: " << convergence_white << std::endl;
+
+    if (convergence_white == unRobots || convergence_black == unRobots)
+    {
+        m_isExperimentFinished = true;
+        std::cout << "experiment over ...." << std::endl;
+    }
+    m_perfFile << "," << m_isExperimentFinished << std::endl;
+    m_posFile << "," << m_isExperimentFinished << std::endl;
+
+
+    }
+
 
 }
 
@@ -363,5 +431,140 @@ void DDMKheperaLoopFunction::PlaceUniformly(UInt32 un_robots,
         bDone = MoveEntity(pcKH->GetEmbodiedEntity(), cKHPos, cKHRot);
     }
 }
+
+
+void DDMKheperaLoopFunction::PlaceUniformlyZones(UInt32 un_robots,
+                                            UInt32 un_data_size,
+                                            Real rab_range,
+                                            Real rab_range_beacon)
+{
+
+    UInt32 unTrials;
+    CKheperaIVEntity *pcKH;
+    std::ostringstream cKHId;
+    CVector3 cKHPos;
+    CQuaternion cKHRot;
+    /* Create a RNG (it is automatically disposed of by ARGoS) */
+
+    //   /* For each robot */
+    for (size_t i = 0; i < un_robots; ++i)
+    {
+        //     /* Make the id */
+        cKHId.str("");
+        cKHId << "kh" << i;
+        //     /* Create the robot in the origin and add it to ARGoS space */
+        pcKH = new CKheperaIVEntity(
+            cKHId.str(),
+            KH_CONTROLLER,
+            CVector3(),
+            CQuaternion(),
+            rab_range,
+            un_data_size);
+        AddEntity(*pcKH);
+        //     /* Add its controller to the list */
+        m_vecControllers.push_back(
+            &dynamic_cast<CBuzzControllerKheperaIV &>(
+                pcKH->GetControllableEntity().GetController()));
+        m_khvec.push_back(pcKH);
+
+        buzzvm_t tBuzzVM = m_vecControllers[i]->GetBuzzVM();
+        m_buzz_ctrl.push_back(tBuzzVM);
+
+        //     /* Try to place it in the arena */
+        unTrials = 0;
+        bool bDone;
+        do
+        {
+            /* Choose a random position */
+            ++unTrials;
+
+            if (i < un_robots/3){
+                CRange<Real> c_range_x(-1.9f, 1.9f);
+                CRange<Real> c_range_y(-1.9f, -1.1f);
+                cKHPos.Set(m_pcRNG->Uniform(c_range_x),
+                       m_pcRNG->Uniform(c_range_y),
+                       0.0f);
+            }
+
+            if (i >= un_robots/3 && i < 2*un_robots/3){
+                CRange<Real> c_range_x(-1.9f, 1.9f);
+                CRange<Real> c_range_y(-0.9f, 0.9f);
+                cKHPos.Set(m_pcRNG->Uniform(c_range_x),
+                       m_pcRNG->Uniform(c_range_y),
+                       0.0f);
+            }
+
+            if (i >= 2*un_robots/3){
+                CRange<Real> c_range_x(-1.9f, 1.9f);
+                CRange<Real> c_range_y(1.1f, 1.9f);
+                cKHPos.Set(m_pcRNG->Uniform(c_range_x),
+                       m_pcRNG->Uniform(c_range_y),
+                       0.0f);
+            }
+
+
+
+            cKHRot.FromAngleAxis(m_pcRNG->Uniform(CRadians::UNSIGNED_RANGE),
+                                 CVector3::Z);
+            bDone = MoveEntity(pcKH->GetEmbodiedEntity(), cKHPos, cKHRot);
+
+        } while (!bDone && unTrials <= MAX_PLACE_TRIALS);
+        if (!bDone)
+        {
+            THROW_ARGOSEXCEPTION("Can't place " << cKHId.str());
+        }
+    }
+
+    
+    for (size_t i = 0; i < 10; ++i)
+    {
+
+        cKHId.str("");
+        cKHId << "kh" << i + 100;
+        //      /* Create the robot in the origin and add it to ARGoS space */
+        pcKH = new CKheperaIVEntity(
+            cKHId.str(),
+            KH_CONTROLLER,
+            CVector3(),
+            CQuaternion(),
+            rab_range_beacon,
+            un_data_size);
+        AddEntity(*pcKH);
+        //     /* Add its controller to the list */
+        m_vecControllers.push_back(
+            &dynamic_cast<CBuzzControllerKheperaIV &>(
+                pcKH->GetControllableEntity().GetController()));
+        m_khvec.push_back(pcKH);
+
+        buzzvm_t tBuzzVM = m_vecControllers[i + un_robots]->GetBuzzVM();
+        m_buzz_ctrl.push_back(tBuzzVM);
+        bool bDone;
+        if (i < 5)
+        {
+
+            cKHPos.Set(i * 0.9f - 1.8f,
+                       2.2f,
+                       0.0f);
+
+            cKHRot.FromAngleAxis(-1 * CRadians::PI_OVER_TWO,
+                                 CVector3::Z);
+        }
+
+        else if (i >= 5)
+        {
+
+            cKHPos.Set((i - 5) * 0.9f - 1.8f,
+                       -2.2f,
+                       0.0f);
+
+            cKHRot.FromAngleAxis(CRadians::PI_OVER_TWO,
+                                 CVector3::Z);
+        }
+
+        bDone = MoveEntity(pcKH->GetEmbodiedEntity(), cKHPos, cKHRot);
+    }
+}
+
+
 
 REGISTER_LOOP_FUNCTIONS(DDMKheperaLoopFunction, "DDM_khepera_loop_function")
