@@ -35,6 +35,13 @@ black_aggregate = 0.0
 black_ratio = 0.0
 decision_flag = 0
 
+aggregated_belief_white = 0.0
+aggregated_belief_black = 0.0
+
+
+others_belief_white = 0.0
+others_belief_black = 0.0
+
 white_followers = swarm.create(3)
 black_followers = swarm.create(2)
 nesters = swarm.create(5)
@@ -46,7 +53,7 @@ opinions = stigmergy.create(8)
 
 opinions.onconflict(function (k,l,r){
     conflicts = conflicts + 1
-    if(r.robot <= l.robot){
+    if(r.data <= l.data){
         return l
     }
     else{
@@ -215,7 +222,7 @@ function collect_samples(){
 function init() {
 
     neighbors.listen("zone", function(rid,data){
-        if (id <  100){
+        if (id <  120){
             if (data == white){
                 zone = "white"
             }
@@ -225,12 +232,11 @@ function init() {
         }
     })
 
-    white_followers.select(id % 2 == 0 and id < 100)
-    black_followers.select(id % 2 == 1 and id < 100)
-    beacons.select(id >= 100)
+    white_followers.select(id % 2 == 0 and id < 120)
+    black_followers.select(id % 2 == 1 and id < 120)
+    beacons.select(id >= 120)
 
-    #opinions.put("belief",{.white = 0.0, .black = 0.0})
-    others_belief = {.white = 0.0, .black = 0.0}
+
 
     if (black_followers.in()){
         belief = black
@@ -253,13 +259,13 @@ function init() {
 function step() {
    
     #debug.print("id: ",id," li_num: ", filtered_light().number, " obs_len: ", math.vec2.length(obs_vec()))
-    debug.print("id: ",id," conflicts ", conflicts, " collisions ", collisions)
+    debug.print("id: ",id," conflicts ", conflicts, " light ", filtered_light().number," obs_len: ", math.vec2.length(obs_vec())," state: ",BVMSTATE," zone: ",zone)
 
     if (beacons.in()){
-        if (id >= 100 and id < 105){
+        if (id >= 120 and id < 125){
             neighbors.broadcast("zone", white)
         }
-        if (id >= 105 and id < 110){
+        if (id >= 125 and id < 130){
             neighbors.broadcast("zone", black)
         }
 
@@ -364,16 +370,24 @@ function step() {
             
             if (not updated){
                 updated = 1
-                if (opinions.get("belief") != nil) {
-                others_belief = opinions.get("belief")
-                }
+
                 if (zone_collected == white){
-                    others_belief.white = others_belief.white + weight*(new_belief - others_belief.white)
+                        if (opinions.get("belief_white") != nil) {
+                            others_belief_white = opinions.get("belief_white")
+                        }
+                        others_belief_white = others_belief_white + weight*(new_belief - others_belief_white)
+
+                        opinions.put("belief_white",others_belief_white)
                 }
                 else if (zone_collected == black){
-                    others_belief.black = others_belief.black + weight*(new_belief - others_belief.black)
+                        if (opinions.get("belief_black") != nil) {
+                            others_belief_black = opinions.get("belief_black")
+                        }
+                        others_belief_black = others_belief_black + weight*(new_belief - others_belief_black)
+
+                        opinions.put("belief_black",others_belief_black)
                 }
-                opinions.put("belief",others_belief)
+                
             }
 
 
@@ -383,13 +397,20 @@ function step() {
 
             decision_flag = 1
 
-            aggregated_belief = opinions.get("belief")
-            white_ratio = aggregated_belief.white
-            black_ratio = aggregated_belief.black
+            if (opinions.get("belief_white") != nil){
+            aggregated_belief_white = opinions.get("belief_white")
+            }
+
+            if (opinions.get("belief_black") != nil){
+            aggregated_belief_black = opinions.get("belief_black")
+            }
+
+            white_ratio = aggregated_belief_white
+            black_ratio = aggregated_belief_black
             
-            if (aggregated_belief.white > aggregated_belief.black) {white_followers.join()}
-            else if (aggregated_belief.white < aggregated_belief.black) {black_followers.join()}
-            log("id: ",id," belief: ",aggregated_belief.white," ",aggregated_belief.black)
+            if (aggregated_belief_white > aggregated_belief_black) {white_followers.join()}
+            else if (aggregated_belief_white < aggregated_belief_black) {black_followers.join()}
+            #log("id: ",id," belief: ",aggregated_belief_white," ",aggregated_belief_black)
             
             sample_average = 0.0
             time_steps = 0
