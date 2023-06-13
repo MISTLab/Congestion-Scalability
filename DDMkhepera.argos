@@ -45,15 +45,15 @@
 
   <loop_functions library="../files/loop_fun_src/build/libDDM_khepera_loop_function.so"
                   label="DDM_khepera_loop_function" 
-                  robots = "80"
+                  robots = "120"
                   dir = "/home/somz/Projects/Hierarchies_to_scale/khepera-simulations/files/data_files/"
                   seed = "4"
                   rab_range = "0.4"
                   rab_range_beacon = "1.2"
-                  rab_data_size = "5000"
+                  rab_data_size = "75"
                   fill_ratio_white = "0.1"
                   fill_ratio_black = "0.9"
-                  out_file = "out"/>
+                  out_file = "movement_congestion"/>
 
 
 

@@ -5,9 +5,9 @@ include "includes/table.bzz"
 
 
 scaling_light_factor = 50
-obstacle_threshold = 0.02
+obstacle_threshold = 0.10
 max_speed = 50
-ang_range =  10 * math.pi / 180
+ang_range =  7.5 * math.pi / 180
 white_threshold = 0.75
 black_threshold = 0.25
 time_threshold = 50
@@ -135,7 +135,7 @@ function display_led(){
     }
 
     if (beacons.in()){
-        if (id < 105) {
+        if (id < 125) {
         set_leds(255,255,255)
         }
         else {
@@ -172,7 +172,7 @@ function follow_avoid(direction) {
     
     if (obs_ang > -ang_range and obs_ang < ang_range and obs_vector_len < obstacle_threshold){
         
-        if (filtered_light().number >= 0) {
+        if (filtered_light().number > 2) {
             light_vector = math.vec2.scale(light_vector, direction*scaling_light_factor/light_vector_len)
             goto(light_vector.x, light_vector.y)
             prev_light_vector = light_vector
@@ -233,7 +233,7 @@ function collect_neighbours(){
 function init() {
 
     neighbors.listen("zones", function(rid, data) {
-        if (id < 100){
+        if (id < 120){
             if (data.zone == "white"){
                 zone = "white"
             }
@@ -244,9 +244,9 @@ function init() {
     })
 
 
-	white_followers.select(id % 2 == 0 and id < 100)
-	black_followers.select((id+1) % 2 == 0  and id < 100)
-    beacons.select(id >= 100)
+	white_followers.select(id % 2 == 0 and id < 120)
+	black_followers.select((id+1) % 2 == 0  and id < 120)
+    beacons.select(id >= 120)
 
     if (black_followers.in()){ 
         belief = black
@@ -267,10 +267,10 @@ function step() {
     
 
     if (beacons.in()){
-        if (id >= 100 and id < 105){
+        if (id >= 120 and id < 125){
         neighbors.broadcast("zones", {.id=id, .zone = "white"})
         }
-        if (id >= 105 and id < 110){
+        if (id >= 125 and id < 130){
         neighbors.broadcast("zones", {.id=id, .zone = "black"})
         }
     }
