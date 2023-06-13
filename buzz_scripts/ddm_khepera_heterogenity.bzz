@@ -137,7 +137,7 @@ function display_led(){
  
 
     if (beacons.in()){
-        if (id < 105) {
+        if (id < 125) {
         set_leds(255,255,255)
         }
         else {
@@ -174,7 +174,7 @@ function follow_avoid(direction) {
     
     if (obs_ang > -ang_range and obs_ang < ang_range and obs_vector_len < obstacle_threshold){
         
-        if (filtered_light().number >= 0) {
+        if (filtered_light().number > 2) {
             light_vector = math.vec2.scale(light_vector, direction*scaling_light_factor/light_vector_len)
             goto(light_vector.x, light_vector.y)
             prev_light_vector = light_vector
@@ -229,7 +229,7 @@ function size_of_array(array){
 function init() {
 
     neighbors.listen("zones", function(rid, data) {
-        if (id < 100){
+        if (id < 120){
             if (data.zone == "white"){
                 zone = "white"
             }
@@ -239,23 +239,23 @@ function init() {
         }
     })
 
-    white_followers.select(id % 3 == 0 and id < 100)
-    black_followers.select(id % 3 == 1 and id < 100)
-    nesters_exploration.select(id % 3 == 2 and id < 100)
+    white_followers.select(id % 3 == 0 and id < 120)
+    black_followers.select(id % 3 == 1 and id < 120)
+    nesters_exploration.select(id % 3 == 2 and id < 120)
 
-    if (id%3 == 0 and id < 100){
+    if (id%3 == 0 and id < 120){
         zone_assigned = "white"
     }
 
-    if (id%3 == 1 and id < 100){
+    if (id%3 == 1 and id < 120){
         zone_assigned = "black"
     }
 
-    if (id%3 == 2 and id < 100){
+    if (id%3 == 2 and id < 120){
         zone_assigned = "nest"
     }
 
-    beacons.select(id >= 100)
+    beacons.select(id >= 120)
 
 
 
@@ -269,10 +269,10 @@ function step() {
     
 
     if (beacons.in()){
-        if (id >= 100 and id < 105){
+        if (id >= 120 and id < 125){
         neighbors.broadcast("zones", {.id=id, .zone = "white"})
         }
-        if (id >= 105 and id < 110){
+        if (id >= 125 and id < 130){
         neighbors.broadcast("zones", {.id=id, .zone = "black"})
         }
     }
