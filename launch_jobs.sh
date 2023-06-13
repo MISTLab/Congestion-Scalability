@@ -11,18 +11,15 @@ set -e
 
 
 # Submit jobs for transport
-
-for SEED in $(seq 1 30)
-    do      
-    for ROBOTS in 2 4 6 8 10 20 40 60 80 100
+     
+for ROBOTS in 120
         do
-            for TYPE in 0
+            for TYPE in 0.4 0.8 1.2
               do
-                RUNID="${ROBOTS}_${TYPE}_${SEED}"
+                RUNID="${ROBOTS}_${TYPE}"
                 echo "RUNID:${RUNID}" 
-                echo "$ROBOTS $SEED $TYPE"
-	            sbatch --job-name=${RUNID} run_jobs.sh $ROBOTS $SEED $TYPE
-                sleep 2
+                echo "$ROBOTS $TYPE"
+	            sbatch --job-name=${RUNID} run.sh $ROBOTS $TYPE
+                sleep 0.5
         done
-    done
 done

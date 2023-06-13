@@ -35,8 +35,8 @@ void DDMKheperaLoopFunction::Init(TConfigurationNode &t_tree)
         m_pcRNG = CRandom::CreateRNG("argos");
 
         m_strOutFile = ".txt";
-        POSTITIONFILE_PREFIX += out_file + "_" + std::to_string(unRobots) + "_" + std::to_string(seed);
-        PERF_PREFIX += out_file + "_" + std::to_string(unRobots) + "_" + std::to_string(seed);
+        POSTITIONFILE_PREFIX += out_file + "_" + std::to_string(unRobots) + "_"+std::to_string(int(rab_range*10)) + "_" + std::to_string(seed);
+        PERF_PREFIX += out_file + "_" + std::to_string(unRobots) + "_"+std::to_string(int(rab_range*10)) + "_" + std::to_string(seed);
 
 
         PlaceUniformly(unRobots, unDataSize, rab_range, rab_range_beacon);
@@ -387,7 +387,7 @@ void DDMKheperaLoopFunction::PlaceUniformly(UInt32 un_robots,
     {
 
         cKHId.str("");
-        cKHId << "kh" << i + 100;
+        cKHId << "kh" << i + 120;
         //      /* Create the robot in the origin and add it to ARGoS space */
         pcKH = new CKheperaIVEntity(
             cKHId.str(),
@@ -520,7 +520,7 @@ void DDMKheperaLoopFunction::PlaceUniformlyZones(UInt32 un_robots,
     {
 
         cKHId.str("");
-        cKHId << "kh" << i + 100;
+        cKHId << "kh" << i + 120;
         //      /* Create the robot in the origin and add it to ARGoS space */
         pcKH = new CKheperaIVEntity(
             cKHId.str(),
