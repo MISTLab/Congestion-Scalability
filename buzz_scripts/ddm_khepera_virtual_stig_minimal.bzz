@@ -222,7 +222,7 @@ function collect_samples(){
 function init() {
 
     neighbors.listen("zone", function(rid,data){
-        if (id <  100){
+        if (id <  120){
             if (data == white){
                 zone = "white"
             }
@@ -232,9 +232,9 @@ function init() {
         }
     })
 
-    white_followers.select(id % 2 == 0 and id < 100)
-    black_followers.select(id % 2 == 1 and id < 100)
-    beacons.select(id >= 100)
+    white_followers.select(id % 2 == 0 and id < 120)
+    black_followers.select(id % 2 == 1 and id < 120)
+    beacons.select(id >= 120)
 
 
 
@@ -262,10 +262,10 @@ function step() {
     debug.print("id: ",id," conflicts ", conflicts, " light ", filtered_light().number," obs_len: ", math.vec2.length(obs_vec())," state: ",BVMSTATE," zone: ",zone)
 
     if (beacons.in()){
-        if (id >= 100 and id < 105){
+        if (id >= 120 and id < 125){
             neighbors.broadcast("zone", white)
         }
-        if (id >= 105 and id < 110){
+        if (id >= 125 and id < 130){
             neighbors.broadcast("zone", black)
         }
 
