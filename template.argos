@@ -8,7 +8,7 @@
     <system threads="30" />
     <experiment length="6000"
                 ticks_per_second="10"
-                random_seed="SEED" />
+                random_seed="0" />
   </framework>
 
   <!-- *************** -->
@@ -43,11 +43,11 @@
 
   </controllers>
 
-  <loop_functions library="/home/soma1701/installations/hierarchies_to_scale/loop_fun_src/build/libDDM_khepera_loop_function.so"
+  <loop_functions library="/home/soma1701/projects/def-beltrame/soma1701/hierarchies_to_scale/loop_fun_src/build/libDDM_khepera_loop_function.so"
                   label="DDM_khepera_loop_function" 
-                  robots = "ROBOTS"
-                  dir = "/home/soma1701/scratch/results/"
-                  seed = "SEED"
+                  robots = "2"
+                  dir = "/home/soma1701/scratch/"
+                  seed = "2"
                   rab_range = "0.4"
                   rab_range_beacon = "1.2"
                   rab_data_size = "5000"
