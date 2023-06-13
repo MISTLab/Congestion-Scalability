@@ -8,7 +8,7 @@
     <system threads="8" />
     <experiment length="6000"
                 ticks_per_second="10"
-                random_seed="31" />
+                random_seed="SEED" />
   </framework>
 
   <!-- *************** -->
@@ -28,12 +28,15 @@
         <kheperaiv_light      implementation="rot_z_only" show_rays="false" />
         <kheperaiv_ultrasound implementation="default" show_rays="false" />
         <kheperaiv_lidar      implementation="default" show_rays="false" />
-        <range_and_bearing    implementation="medium" medium="rab" show_rays="true" noise_std_dev="0" />
+        <range_and_bearing    implementation="medium" medium="rab" show_rays="false" noise_std_dev="0" />
         <positioning          implementation="default" />
       </sensors>
 
-        <params bytecode_file="buzz_scripts/ddm_khepera.bo" debug_file="buzz_scripts/ddm_khepera.bdb">
+        <!-- <params bytecode_file="../files/buzz_scripts/ddm_khepera.bo" debug_file="../files/buzz_scripts/ddm_khepera.bdb"> -->
         <!-- <params bytecode_file="../files/buzz_scripts/explore.bo" debug_file="../files/buzz_scripts/explore.bdb"> -->
+        <!-- <params bytecode_file="../files/buzz_scripts/ddm_khepera_virtual_stig.bo" debug_file="../files/buzz_scripts/ddm_khepera_virtual_stig.bdb"> -->
+        <!-- <params bytecode_file="../files/buzz_scripts/ddm_khepera_virtual_stig_minimal.bo" debug_file="../files/buzz_scripts/ddm_khepera_virtual_stig_minimal.bdb"> -->
+        <params bytecode_file="buzz_scripts/ddm_khepera_heterogenity.bo" debug_file="buzz_scripts/ddm_khepera_heterogenity.bdb">
         <wheel_turning hard_turn_angle_threshold="90"
                        soft_turn_angle_threshold="70"
                        no_turn_angle_threshold="10"
@@ -43,17 +46,17 @@
 
   </controllers>
 
-  <loop_functions library="/home/soma1701/installations/hierarchies_to_scale/loop_fun_src/build/libDDM_khepera_loop_function.so"
+  <loop_functions library="/home/soma1701/projects/def-beltrame/soma1701/hierarchies_to_scale/loop_fun_src/build/libDDM_khepera_loop_function.so"
                   label="DDM_khepera_loop_function" 
-                  robots = "20"
-                  dir = "/home/soma1701/scratch/results/"
-                  seed = "31"
-                  rab_range = "0.4"
+                  robots = "ROBOTS"
+                  dir = "/home/soma1701/scratch/div_labour/"
+                  seed = "SEED"
+                  rab_range = "TYPE"
                   rab_range_beacon = "1.2"
-                  rab_data_size = "5000"
+                  rab_data_size = "75"
                   fill_ratio_white = "0.1"
                   fill_ratio_black = "0.9"
-                  out_file = "out"/>
+                  out_file = "divison_labour"/>
 
 
 
@@ -125,7 +128,7 @@
       <position method="uniform" min="-1.75,-0.9,0" max="1.75,0.9,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
       <entity quantity="2" max_trials="100">
-        <kheperaiv id="kh" rab_range="1.5" rab_data_size="5000">
+        <kheperaiv id="kh" rab_range="0.4" rab_data_size="5000">
           <controller config="khivbz" />
         </kheperaiv>
       </entity>
@@ -156,14 +159,6 @@
   <!-- * Visualization * -->
   <!-- ****************** -->    
   <visualization/>
-    <!-- <qt-opengl>
-     <user_functions label="buzz_qt" />
-      <camera>
-        <placements>
-          <placement index="0" position="0,0,5" look_at="0,0,0" up="0,1,0" lens_focal_length="30" />
-        </placements>
-      </camera>
-    </qt-opengl>
-  </visualization>   -->
+
 
 </argos-configuration>
