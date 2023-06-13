@@ -174,7 +174,7 @@ function follow_avoid(direction) {
     
     if (obs_ang > -ang_range and obs_ang < ang_range and obs_vector_len < obstacle_threshold){
         
-        if (filtered_light().number >= 0) {
+        if (filtered_light().number > 2) {
             light_vector = math.vec2.scale(light_vector, direction*scaling_light_factor/light_vector_len)
             goto(light_vector.x, light_vector.y)
             prev_light_vector = light_vector
