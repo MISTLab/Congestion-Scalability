@@ -45,7 +45,7 @@
 
   <loop_functions library="../files/loop_fun_src/build/libDDM_khepera_loop_function.so"
                   label="DDM_khepera_loop_function" 
-                  robots = "120"
+                  robots = "100"
                   dir = "/home/somz/Projects/Hierarchies_to_scale/khepera-simulations/files/data_files/"
                   seed = "4"
                   rab_range = "0.4"
@@ -92,7 +92,7 @@
            intensity="1000.0"
            medium="leds"/>
     
-    <light id="light1"
+    <!-- <light id="light1"
            position="1.4,1.95,2"
            orientation="0,0,0"
            color="yellow"
@@ -118,7 +118,7 @@
            orientation="0,0,0"
            color="yellow"
            intensity="500.0"
-           medium="leds"/>
+           medium="leds"/> -->
 
 
     <!-- <distribute>
