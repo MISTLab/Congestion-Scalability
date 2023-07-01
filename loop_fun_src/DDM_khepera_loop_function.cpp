@@ -387,7 +387,7 @@ void DDMKheperaLoopFunction::PlaceUniformly(UInt32 un_robots,
     {
 
         cKHId.str("");
-        cKHId << "kh" << i + 120;
+        cKHId << "kh" << i + 150;
         //      /* Create the robot in the origin and add it to ARGoS space */
         pcKH = new CKheperaIVEntity(
             cKHId.str(),
