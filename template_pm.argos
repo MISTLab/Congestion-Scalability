@@ -32,7 +32,7 @@
         <positioning          implementation="default" />
       </sensors>
 
-        <params bytecode_file="buzz_scripts/ddm_khepera.bo" debug_file="buzz_scripts/ddm_khepera.bdb">
+        <params bytecode_file="buzz_scripts/ddm_khepera_pm.bo" debug_file="buzz_scripts/ddm_khepera_pm.bdb">
         <!-- <params bytecode_file="../files/buzz_scripts/explore.bo" debug_file="../files/buzz_scripts/explore.bdb"> -->
         <wheel_turning hard_turn_angle_threshold="90"
                        soft_turn_angle_threshold="70"
@@ -46,7 +46,7 @@
   <loop_functions library="/home/soma1701/projects/def-beltrame/soma1701/hierarchies_to_scale/loop_fun_src/build/libDDM_khepera_loop_function.so"
                   label="DDM_khepera_loop_function" 
                   robots = "ROBOTS"
-                  dir = "/home/soma1701/scratch/move_congestion_without_pm/"
+                  dir = "/home/soma1701/scratch/move_congestion_pm/"
                   seed = "SEED"
                   rab_range = "TYPE"
                   rab_range_beacon = "1.2"
