@@ -45,7 +45,7 @@
 
   <loop_functions library="../files/loop_fun_src/build/libDDM_khepera_loop_function.so"
                   label="DDM_khepera_loop_function" 
-                  robots = "100"
+                  robots = "150"
                   dir = "/home/somz/Projects/Hierarchies_to_scale/khepera-simulations/files/data_files/"
                   seed = "4"
                   rab_range = "0.4"
