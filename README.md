@@ -1,6 +1,25 @@
 # Congestion and Scalability in Robot Swarms: a Study on Collective Decision Making 
 
 
+To cite us:
+```
+@misc{soma2023congestion,
+      title={Congestion and Scalability in Robot Swarms: a Study on Collective Decision Making}, 
+      author={Karthik Soma and Vivek Shankar Vardharajan and Heiko Hamann and Giovanni Beltrame},
+      year={2023},
+      eprint={2307.08568},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO}
+}
+```
+
+
+
+
+
+
+
+
 ## Setting up the simlations for Line and Star in Argos3 and Buzz.
 
 ARGoS3 Simulator ARGoS3 simulator can also be installed from binaries please refer to the official website for more information: https://www.argos-sim.info/
@@ -55,4 +74,39 @@ $ mkdir build
 $ cd build/
 $ cmake ..
 $ make
+```
+
+Building the Buzz scripts:
+
+```
+cd buzz_scripts
+bzzc -I includes/ HoneyBee_pm.bzz
+bzzc -I includes/ HoneyBee_wpm.bzz
+bzzc -I includes/ StigmergyDatabase.bzz
+bzzc -I includes/ StigmergyConsensus.bzz
+bzzc -I includes/ DivsionOfLabor.bzz
+```
+
+Data Processing files:
+
+Refer to `data_processing/HoneyBee.ipynb` for Honey Bee approach, `data_processing/Stigmergy.ipynb` for the Stigmergy approach and `data_processing/DivisionOfLabor.ipynb` for the Divison of labor approach. 
+
+
+
+Parameters to change:
+
+For examples check the files `DDMkhepera_HoneyBee.argos`, `DDMkhepera_stigmergy_divisonoflabor.argos` and `DDMkhepera_stigmergy.argos`.
+
+```
+<loop_functions library="BINARY_FILE_OF_BUILD_FILE_LOOPFUNCTION"
+                  label="LABEL NAME" 
+                  robots = "NUMBER OF ROBOTS"
+                  dir = "DATA FILE OUTPUT DIRECTORY"
+                  seed = "SEED NUMBER"
+                  rab_range = "RANGE OF ROBOTS"
+                  rab_range_beacon = "RANGE OF BEACONS"
+                  rab_data_size = "MESSAGE SIZE IN BYTES"
+                  fill_ratio_white = "ZONE A FILL RATIO"
+                  fill_ratio_black = "ZONE B FILL RATIO"
+                  out_file = "OUTPUT FILE CLASS NAME"/>
 ```
