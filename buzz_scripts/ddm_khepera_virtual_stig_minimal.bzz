@@ -370,7 +370,6 @@ function step() {
             
             if (not updated){
                 updated = 1
-
                 if (zone_collected == white){
                         if (opinions.get("belief_white") != nil) {
                             others_belief_white = opinions.get("belief_white")

@@ -21,7 +21,7 @@ zone = "nest"
 white = 1 
 black = -1
 
-number_of_samples = 50  
+number_of_samples = 50
 belief = 0.5 
 new_belief = 0.5
 
