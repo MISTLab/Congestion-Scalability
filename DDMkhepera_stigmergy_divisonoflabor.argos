@@ -36,7 +36,7 @@
         <!-- <params bytecode_file="../files/buzz_scripts/explore.bo" debug_file="../files/buzz_scripts/explore.bdb"> -->
         <!-- <params bytecode_file="../files/buzz_scripts/ddm_khepera_virtual_stig.bo" debug_file="../files/buzz_scripts/ddm_khepera_virtual_stig.bdb"> -->
         <!-- <params bytecode_file="../files/buzz_scripts/ddm_khepera_virtual_stig_minimal.bo" debug_file="../files/buzz_scripts/ddm_khepera_virtual_stig_minimal.bdb"> -->
-        <params bytecode_file="../files/buzz_scripts/ddm_khepera_heterogenity.bo" debug_file="../files/buzz_scripts/ddm_khepera_heterogenity.bdb">
+        <params bytecode_file="../files/buzz_scripts/DivisionOfLabor.bo" debug_file="../files/buzz_scripts/DivisionOfLabor.bdb">
         <wheel_turning hard_turn_angle_threshold="90"
                        soft_turn_angle_threshold="70"
                        no_turn_angle_threshold="10"

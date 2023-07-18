@@ -32,7 +32,7 @@
         <positioning          implementation="default" />
       </sensors>
 
-        <params bytecode_file="../files/buzz_scripts/ddm_khepera.bo" debug_file="../files/buzz_scripts/ddm_khepera.bdb">
+        <params bytecode_file="../files/buzz_scripts/HoneyBee_pm.bo" debug_file="../files/buzz_scripts/HoneyBee_pm.bdb">
         <!-- <params bytecode_file="../files/buzz_scripts/explore.bo" debug_file="../files/buzz_scripts/explore.bdb"> -->
         <wheel_turning hard_turn_angle_threshold="90"
                        soft_turn_angle_threshold="70"
@@ -45,7 +45,7 @@
 
   <loop_functions library="../files/loop_fun_src/build/libDDM_khepera_loop_function.so"
                   label="DDM_khepera_loop_function" 
-                  robots = "150"
+                  robots = "2"
                   dir = "/home/somz/Projects/Hierarchies_to_scale/khepera-simulations/files/data_files/"
                   seed = "4"
                   rab_range = "0.4"

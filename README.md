@@ -20,7 +20,7 @@ To cite us:
 
 
 
-## Setting up the simlations for Line and Star in Argos3 and Buzz.
+## Setting up the simulations for Honey Bee, Stigmergy and Divison of Labor approaches in Argos3 and Buzz.
 
 ARGoS3 Simulator ARGoS3 simulator can also be installed from binaries please refer to the official website for more information: https://www.argos-sim.info/
 The instructions below are for installing ARGoS3 from its source.
@@ -87,13 +87,13 @@ bzzc -I includes/ StigmergyConsensus.bzz
 bzzc -I includes/ DivsionOfLabor.bzz
 ```
 
-Data Processing files:
+##Data Processing files:
 
-Refer to `data_processing/HoneyBee.ipynb` for Honey Bee approach, `data_processing/Stigmergy.ipynb` for the Stigmergy approach and `data_processing/DivisionOfLabor.ipynb` for the Divison of labor approach. 
+Refer to `data_processing/HoneyBee.ipynb` for the Honey Bee approach, `data_processing/Stigmergy.ipynb` for the Stigmergy approach and `data_processing/DivisionOfLabor.ipynb` for the Divison of labor approach. 
 
 
 
-Parameters to change:
+##Parameters to change:
 
 For examples check the files `DDMkhepera_HoneyBee.argos`, `DDMkhepera_stigmergy_divisonoflabor.argos` and `DDMkhepera_stigmergy.argos`.
 
