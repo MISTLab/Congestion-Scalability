@@ -137,7 +137,7 @@ function display_led(){
  
 
     if (beacons.in()){
-        if (id < 125) {
+        if (id < 155) {
         set_leds(255,255,255)
         }
         else {
@@ -229,7 +229,7 @@ function size_of_array(array){
 function init() {
 
     neighbors.listen("zones", function(rid, data) {
-        if (id < 120){
+        if (id < 150){
             if (data.zone == "white"){
                 zone = "white"
             }
@@ -239,23 +239,23 @@ function init() {
         }
     })
 
-    white_followers.select(id % 3 == 0 and id < 120)
-    black_followers.select(id % 3 == 1 and id < 120)
-    nesters_exploration.select(id % 3 == 2 and id < 120)
+    white_followers.select(id % 3 == 0 and id < 150)
+    black_followers.select(id % 3 == 1 and id < 150)
+    nesters_exploration.select(id % 3 == 2 and id < 150)
 
-    if (id%3 == 0 and id < 120){
+    if (id%3 == 0 and id < 150){
         zone_assigned = "white"
     }
 
-    if (id%3 == 1 and id < 120){
+    if (id%3 == 1 and id < 150){
         zone_assigned = "black"
     }
 
-    if (id%3 == 2 and id < 120){
+    if (id%3 == 2 and id < 150){
         zone_assigned = "nest"
     }
 
-    beacons.select(id >= 120)
+    beacons.select(id >= 150)
 
 
 
@@ -269,10 +269,10 @@ function step() {
     
 
     if (beacons.in()){
-        if (id >= 120 and id < 125){
+        if (id >= 150 and id < 155){
         neighbors.broadcast("zones", {.id=id, .zone = "white"})
         }
-        if (id >= 125 and id < 130){
+        if (id >= 155 and id < 160){
         neighbors.broadcast("zones", {.id=id, .zone = "black"})
         }
     }

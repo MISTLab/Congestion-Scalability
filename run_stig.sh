@@ -1,10 +1,9 @@
 #!/bin/bash
 #SBATCH --account=def-beltrame
-#SBATCH --time=4:30:00
+#SBATCH --time=3:00:00
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=8
 #SBATCH --array=0-29
-
 
 # Stop on any error
 set -e
@@ -66,7 +65,7 @@ cd /home/soma1701/projects/def-beltrame/soma1701/hierarchies_to_scale/
 sed -e "s|SEED|${SEED}|g" \
     -e "s|ROBOTS|${ROBOTS}|g" \
     -e "s|TYPE|${TYPE}|g" \
-    template_pm.argos > ${EXPERIMENT}
+    template_stig.argos > ${EXPERIMENT}
 
 # Launch ARGoS
 
