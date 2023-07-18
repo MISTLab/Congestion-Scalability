@@ -372,13 +372,13 @@ function step() {
 
         neighbors.broadcast("opinions",{.id=id,.belief=new_belief,.zone_collected=zone_collected})
 
-        if (time_steps > int(2*time_threshold*new_belief) - int(2*delta_time*new_belief) ){
+        if (time_steps > time_threshold - delta_time ){
             #debug.print("id: ", id, " broadcasting and collecting ")
             #neighbors.broadcast("opinions",{.id=id,.belief=new_belief,.zone_collected=zone_collected})
             collect_neighbours()
         }
 
-        if (time_steps > int(2*time_threshold*new_belief)){
+        if (time_steps > time_threshold){
             
             decision_flag = 1
             #debug.print("id: ", id, " decision_making.... ")
