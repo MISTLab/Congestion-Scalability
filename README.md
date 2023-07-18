@@ -87,13 +87,21 @@ bzzc -I includes/ StigmergyConsensus.bzz
 bzzc -I includes/ DivsionOfLabor.bzz
 ```
 
-##Data Processing files:
+To run the experiments:
+
+```
+argos3 -c DDMkhepera_HoneyBee.argos #Honey Bee inspired approach
+argos3 -c DDMkhepera_stigmergy_divisonoflabor.argos # Stigmergy and division of labor 
+argos3 -c DDMkhepera_stigmergy.argos #Stigmergy approach
+
+
+## Data Processing files:
 
 Refer to `data_processing/HoneyBee.ipynb` for the Honey Bee approach, `data_processing/Stigmergy.ipynb` for the Stigmergy approach and `data_processing/DivisionOfLabor.ipynb` for the Divison of labor approach. 
 
 
 
-##Parameters to change:
+## Parameters to change:
 
 For examples check the files `DDMkhepera_HoneyBee.argos`, `DDMkhepera_stigmergy_divisonoflabor.argos` and `DDMkhepera_stigmergy.argos`.
 
